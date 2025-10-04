@@ -4,7 +4,15 @@
   "scripts": {
     "deploy": "cd contracts && npx hardhat run scripts/deploy.js --network amoy",
     "backend": "node backend.js",
-    "start": "node backend.js"
+    "start": "node backend.js",
+    "frontend:install": "cd frontend && npm install",
+    "frontend:dev": "cd frontend && npm run dev",
+    "frontend:build": "cd frontend && npm run build",
+    "frontend:preview": "cd frontend && npm run preview",
+    "dev": "concurrently \"npm run backend\" \"npm run frontend:dev\"",
+    "build": "npm run frontend:build",
+    "clean": "rm -rf dist && cd frontend && rm -rf dist node_modules",
+    "clean:install": "npm run clean && npm install && npm run frontend:install"
   },
   "dependencies": {
     "express": "^4.18.2",
@@ -13,6 +21,9 @@
     "ethers": "^6.9.0",
     "hardhat": "^2.19.2",
     "@nomicfoundation/hardhat-toolbox": "^4.0.0"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
   }
 }
 

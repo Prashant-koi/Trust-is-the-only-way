@@ -7,7 +7,16 @@ require('dotenv').config();
 const app = express();
 app.use(cors());
 app.use(express.json());
-app.use(express.static('public'));
+
+// Serve frontend - prioritize dist (Vite build) over public (legacy)
+const fs = require('fs');
+if (fs.existsSync('dist')) {
+  app.use(express.static('dist'));
+  console.log('📁 Serving Vite frontend from /dist');
+} else {
+  app.use(express.static('public'));
+  console.log('📁 Serving legacy frontend from /public');
+}
 
 // Blockchain setup
 const provider = new ethers.JsonRpcProvider(process.env.ETHEREUM_RPC_URL);
