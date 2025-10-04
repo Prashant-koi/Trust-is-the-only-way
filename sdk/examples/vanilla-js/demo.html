@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🔒 TrustJS SDK - Working Demo</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    
+    .header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+    
+    .status-card {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 30px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+      margin-bottom: 30px;
+    }
+    
+    .product-card {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 24px;
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    
+    .product-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+    
+    .product-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+    
+    .product-price {
+      font-size: 28px;
+      font-weight: 700;
+      color: #ffd700;
+      margin: 16px 0;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+    
+    .btn {
+      background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+      color: white;
+      border: none;
+      padding: 14px 28px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      width: 100%;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    }
+    
+    .btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    }
+    
+    .btn:disabled {
+      background: #6c757d;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .status {
+      padding: 16px;
+      border-radius: 12px;
+      margin: 16px 0;
+      font-weight: 500;
+    }
+    
+    .status.success {
+      background: rgba(40, 167, 69, 0.2);
+      border: 1px solid rgba(40, 167, 69, 0.5);
+      color: #28a745;
+    }
+    
+    .status.error {
+      background: rgba(220, 53, 69, 0.2);
+      border: 1px solid rgba(220, 53, 69, 0.5);
+      color: #dc3545;
+    }
+    
+    .status.info {
+      background: rgba(23, 162, 184, 0.2);
+      border: 1px solid rgba(23, 162, 184, 0.5);
+      color: #17a2b8;
+    }
+    
+    .status.warning {
+      background: rgba(255, 193, 7, 0.2);
+      border: 1px solid rgba(255, 193, 7, 0.5);
+      color: #ffc107;
+    }
+    
+    .debug-info {
+      font-size: 12px;
+      opacity: 0.7;
+      margin-top: 8px;
+      font-family: monospace;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1>🔒 TrustJS Payment SDK</h1>
+      <p>Secure Payments with Multi-Factor Authentication</p>
+    </header>
+
+    <div class="status-card">
+      <h3>🔍 System Status</h3>
+      <div id="system-status" class="status info">
+        Initializing TrustJS SDK...
+      </div>
+    </div>
+
+    <div class="product-grid">
+      <div class="product-card">
+        <div class="product-icon">💻</div>
+        <h3>Gaming Laptop Pro</h3>
+        <p>High-performance gaming laptop with RTX graphics</p>
+        <div class="product-price">$1,299.99</div>
+        <button class="btn" id="laptop-btn" disabled>
+          🔒 Secure Purchase
+        </button>
+        <div class="debug-info">High amount - MFA required</div>
+      </div>
+
+      <div class="product-card">
+        <div class="product-icon">📱</div>
+        <h3>Smartphone Ultra</h3>
+        <p>Latest flagship smartphone with AI camera</p>
+        <div class="product-price">$299.99</div>
+        <button class="btn" id="phone-btn" disabled>
+          🔒 Secure Purchase
+        </button>
+        <div class="debug-info">Low amount - No MFA needed</div>
+      </div>
+    </div>
+
+    <div class="status-card" id="transaction-log" style="display: none;">
+      <h3>📊 Transaction Log</h3>
+      <div id="log-content"></div>
+    </div>
+  </div>
+
+  <!-- Load TrustJS -->
+  <script src="../../dist/trustjs.umd.js"></script>
+  
+  <script>
+    const statusEl = document.getElementById('system-status')
+    const laptopBtn = document.getElementById('laptop-btn')
+    const phoneBtn = document.getElementById('phone-btn')
+    const transactionLog = document.getElementById('transaction-log')
+    const logContent = document.getElementById('log-content')
+    
+    let trustjs = null
+    let logEntries = []
+    
+    function updateStatus(message, type = 'info') {
+      statusEl.textContent = message
+      statusEl.className = `status ${type}`
+      addLog(message, type)
+    }
+    
+    function addLog(message, type) {
+      const timestamp = new Date().toLocaleTimeString()
+      logEntries.push({ timestamp, message, type })
+      
+      logContent.innerHTML = logEntries
+        .slice(-5) // Show last 5 entries
+        .map(entry => `
+          <div class="status ${entry.type}" style="margin: 8px 0; padding: 8px; font-size: 14px;">
+            <strong>${entry.timestamp}</strong>: ${entry.message}
+          </div>
+        `).join('')
+      
+      transactionLog.style.display = 'block'
+    }
+    
+    async function initializeSystem() {
+      try {
+        // Step 1: Check if TrustJS loaded
+        if (typeof TrustJS === 'undefined') {
+          throw new Error('TrustJS SDK failed to load')
+        }
+        updateStatus('✅ TrustJS SDK loaded', 'success')
+        
+        // Step 2: Test backend connection
+        updateStatus('🔌 Testing backend connection...', 'info')
+        const healthResponse = await fetch('http://localhost:3001/health')
+        
+        if (!healthResponse.ok) {
+          throw new Error('Backend health check failed')
+        }
+        
+        const healthData = await healthResponse.json()
+        updateStatus(`✅ Backend connected: ${healthData.status}`, 'success')
+        
+        // Step 3: Initialize TrustJS
+        updateStatus('🚀 Initializing TrustJS...', 'info')
+        trustjs = new TrustJS.default({
+          publishableKey: 'pk_test_51SEPdMHqjaPgoLNariaByJzqugHs05citHWNSmTx2z5Zkn9oH85qD1KYXRMubgt3PYa0q43hIZ0OAbLXmcoxMZWO00cd448f5V',
+          merchantId: 'demo_merchant_001',
+          apiUrl: 'http://localhost:3001',
+          theme: 'dark',
+          mfaThreshold: 500
+        })
+        
+        // Step 4: Test SDK functionality
+        updateStatus('🧪 Testing SDK functionality...', 'info')
+        const version = trustjs.getVersion()
+        updateStatus(`✅ TrustJS v${version} ready! Click products to test payments.`, 'success')
+        
+        // Enable buttons
+        laptopBtn.disabled = false
+        phoneBtn.disabled = false
+        
+        // Set up event handlers
+        setupEventHandlers()
+        
+      } catch (error) {
+        console.error('Initialization error:', error)
+        updateStatus(`❌ Initialization failed: ${error.message}`, 'error')
+        
+        // Provide helpful hints
+        if (error.message.includes('Backend')) {
+          addLog('💡 Make sure your PayShield backend is running on port 3001', 'warning')
+          addLog('💡 Run: wsl bash -c "cd /mnt/c/Users/koira/Trust-is-only-way && node backend.js"', 'info')
+        }
+      }
+    }
+    
+    function setupEventHandlers() {
+      laptopBtn.addEventListener('click', () => {
+        handlePurchase('Gaming Laptop Pro', 1299.99, 'laptop', laptopBtn)
+      })
+      
+      phoneBtn.addEventListener('click', () => {
+        handlePurchase('Smartphone Ultra', 299.99, 'phone', phoneBtn)
+      })
+    }
+    
+    async function handlePurchase(productName, amount, productId, button) {
+      const orderId = `${productId}_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`
+      
+      try {
+        button.disabled = true
+        button.innerHTML = '⏳ Processing...'
+        updateStatus(`💳 Creating payment for ${productName}...`, 'info')
+        
+        // Create payment
+        const payment = await trustjs.createPayment({
+          amount: amount,
+          orderId: orderId,
+          currency: 'usd',
+          customer: {
+            email: 'demo@example.com',
+            name: 'Demo Customer'
+          }
+        })
+        
+        addLog(`Payment created: ${orderId}`, 'success')
+        console.log('Payment details:', payment)
+        
+        if (payment.mfaRequired) {
+          updateStatus('🔐 MFA verification required', 'warning')
+          addLog('Check your backend terminal for the OTP code', 'info')
+          
+          const otp = prompt(`MFA Required for $${amount}\n\nPlease check your backend terminal for the 6-digit OTP code and enter it below:`)
+          
+          if (otp && otp.length === 6 && /^\d{6}$/.test(otp)) {
+            updateStatus('🔍 Verifying MFA...', 'info')
+            
+            const verification = await trustjs.verifyMfa(orderId, otp)
+            
+            if (verification.success) {
+              updateStatus(`🎉 Payment completed! ${productName} purchased for $${amount}`, 'success')
+              addLog(`MFA verified successfully`, 'success')
+            } else {
+              throw new Error('MFA verification failed')
+            }
+          } else {
+            throw new Error('Valid 6-digit OTP required')
+          }
+        } else {
+          updateStatus(`🎉 Payment completed! ${productName} purchased for $${amount}`, 'success')
+          addLog(`Payment completed without MFA (amount below threshold)`, 'success')
+        }
+        
+      } catch (error) {
+        console.error('Payment error:', error)
+        updateStatus(`❌ Payment failed: ${error.message}`, 'error')
+        addLog(`Payment error: ${error.message}`, 'error')
+      } finally {
+        button.disabled = false
+        button.innerHTML = '🔒 Secure Purchase'
+      }
+    }
+    
+    // Start initialization
+    updateStatus('🔄 Starting system initialization...', 'info')
+    initializeSystem()
+  </script>
+</body>
+</html>

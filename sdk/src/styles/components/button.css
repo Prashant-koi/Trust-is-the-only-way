@@ -1,0 +1,100 @@
+.trustjs-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--trustjs-spacing-sm);
+  
+  font-family: var(--trustjs-font-family);
+  font-size: var(--trustjs-font-size);
+  font-weight: 600;
+  line-height: 1;
+  
+  border: none;
+  border-radius: var(--trustjs-radius);
+  cursor: pointer;
+  text-decoration: none;
+  transition: var(--trustjs-transition);
+  
+  /* Prevent text selection */
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.trustjs-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.3);
+}
+
+/* Sizes */
+.trustjs-button--small {
+  padding: 8px 16px;
+  font-size: var(--trustjs-font-size-sm);
+  min-height: 32px;
+}
+
+.trustjs-button--medium {
+  padding: 12px 24px;
+  font-size: var(--trustjs-font-size);
+  min-height: 40px;
+}
+
+.trustjs-button--large {
+  padding: 16px 32px;
+  font-size: var(--trustjs-font-size-lg);
+  min-height: 48px;
+}
+
+/* Themes */
+.trustjs-button--primary {
+  background: linear-gradient(135deg, var(--trustjs-primary) 0%, var(--trustjs-primary-hover) 100%);
+  color: white;
+  box-shadow: 0 4px 14px rgba(108, 99, 255, 0.3);
+}
+
+.trustjs-button--primary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 25px rgba(108, 99, 255, 0.4);
+}
+
+.trustjs-button--primary:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.trustjs-button--secondary {
+  background: var(--trustjs-surface);
+  color: var(--trustjs-text);
+  border: 1px solid var(--trustjs-border);
+}
+
+.trustjs-button--secondary:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.trustjs-button--minimal {
+  background: transparent;
+  color: var(--trustjs-text-secondary);
+  border: 1px solid transparent;
+}
+
+.trustjs-button--minimal:hover:not(:disabled) {
+  color: var(--trustjs-text);
+  border-color: var(--trustjs-border);
+}
+
+/* States */
+.trustjs-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.trustjs-button--processing {
+  opacity: 0.8;
+  cursor: wait;
+}
+
+/* Full width variant */
+.trustjs-button--full {
+  width: 100%;
+}

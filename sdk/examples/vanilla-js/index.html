@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TrustJS Vanilla JavaScript Example</title>
+  <link rel="stylesheet" href="../../dist/trustjs.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Inter', system-ui, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      color: #f8f9ff;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      margin-bottom: 40px;
+    }
+    
+    .product-card {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      padding: 24px;
+      text-align: center;
+    }
+    
+    .product-image {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+    
+    .product-price {
+      font-size: 24px;
+      font-weight: 600;
+      color: #6c63ff;
+      margin: 16px 0;
+    }
+    
+    .status {
+      margin-top: 20px;
+      padding: 12px;
+      border-radius: 8px;
+      text-align: center;
+    }
+    
+    .status--success {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #10b981;
+    }
+    
+    .status--error {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #ef4444;
+    }
+    
+    .status--info {
+      background: rgba(59, 130, 246, 0.1);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      color: #3b82f6;
+    }
+    
+    #paymentForm {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1>🛒 TrustJS Vanilla JavaScript Demo</h1>
+      <p>Secure payments with MFA protection - No React required!</p>
+    </header>
+
+    <div class="product-grid">
+      <div class="product-card">
+        <div class="product-image">🎮</div>
+        <h2>Gaming Laptop Pro</h2>
+        <p>High-performance laptop for gaming and development</p>
+        <p class="product-price">$1,299.99</p>
+        
+        <button id="payButton" class="trustjs-button trustjs-button--primary trustjs-button--medium">
+          🔒 Buy Now - $1,299.99
+        </button>
+      </div>
+    </div>
+
+    <div id="paymentForm"></div>
+
+    <div id="status" class="status" style="display: none;"></div>
+  </div>
+
+  <script type="module" src="script.js"></script>
+</body>
+</html>

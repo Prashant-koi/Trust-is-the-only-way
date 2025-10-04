@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TrustJS UMD Demo</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      color: #f8f9ff;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    
+    .product-card {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      padding: 24px;
+      margin: 20px 0;
+    }
+    
+    .product-image {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+    
+    .product-price {
+      font-size: 24px;
+      font-weight: 600;
+      color: #6c63ff;
+      margin: 16px 0;
+    }
+    
+    button {
+      background: #6c63ff;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 500;
+      width: 200px;
+    }
+    
+    button:hover {
+      background: #5a52d5;
+    }
+    
+    button:disabled {
+      background: #4a5568;
+      cursor: not-allowed;
+    }
+    
+    .status {
+      margin-top: 20px;
+      padding: 12px;
+      border-radius: 8px;
+      text-align: center;
+    }
+    
+    .status.success {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #10b981;
+    }
+    
+    .status.error {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #ef4444;
+    }
+    
+    .status.info {
+      background: rgba(59, 130, 246, 0.1);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      color: #3b82f6;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔒 TrustJS SDK Demo (UMD)</h1>
+    <p>Testing TrustJS with UMD build</p>
+    
+    <div class="product-card">
+      <div class="product-image">💻</div>
+      <h3>Test Product</h3>
+      <div class="product-price">$599.99</div>
+      <button id="test-payment">🔒 Test Payment</button>
+    </div>
+    
+    <div id="status" class="status info">
+      Loading TrustJS SDK...
+    </div>
+  </div>
+
+  <!-- Load TrustJS UMD build -->
+  <script src="../../dist/trustjs.umd.js"></script>
+  
+  <script>
+    console.log('Page loaded, TrustJS available:', typeof TrustJS)
+    
+    const statusDiv = document.getElementById('status')
+    
+    function showStatus(message, type = 'info') {
+      statusDiv.textContent = message
+      statusDiv.className = `status ${type}`
+    }
+    
+    // Check if TrustJS loaded
+    if (typeof TrustJS === 'undefined') {
+      showStatus('❌ TrustJS SDK failed to load', 'error')
+    } else {
+      showStatus('✅ TrustJS SDK loaded successfully!', 'success')
+      
+      try {
+        // Initialize TrustJS
+        const trustjs = new TrustJS.default({
+          publishableKey: 'pk_test_51SEPdMHqjaPgoLNariaByJzqugHs05citHWNSmTx2z5Zkn9oH85qD1KYXRMubgt3PYa0q43hIZ0OAbLXmcoxMZWO00cd448f5V',
+          merchantId: 'demo_merchant_001',
+          apiUrl: 'http://localhost:3001'
+        })
+        
+        showStatus('🚀 TrustJS initialized! Click the button to test.', 'success')
+        
+        // Set up payment handler
+        document.getElementById('test-payment').addEventListener('click', async function(e) {
+          const button = e.target
+          const orderId = `order_${Date.now()}`
+          
+          try {
+            button.disabled = true
+            button.textContent = '⏳ Processing...'
+            showStatus('Creating payment...', 'info')
+            
+            const payment = await trustjs.createPayment({
+              amount: 599.99,
+              orderId: orderId,
+              currency: 'usd',
+              customer: {
+                email: 'test@example.com',
+                name: 'Test Customer'
+              }
+            })
+            
+            console.log('Payment created:', payment)
+            
+            if (payment.mfaRequired) {
+              showStatus('🔐 MFA required. Check backend for OTP.', 'info')
+              const otp = prompt('Enter OTP from backend:')
+              
+              if (otp) {
+                showStatus('Verifying OTP...', 'info')
+                const result = await trustjs.verifyMfa(orderId, otp)
+                
+                if (result.success) {
+                  showStatus('🎉 Payment successful with MFA!', 'success')
+                } else {
+                  throw new Error('MFA verification failed')
+                }
+              } else {
+                throw new Error('OTP required')
+              }
+            } else {
+              showStatus('🎉 Payment successful!', 'success')
+            }
+            
+          } catch (error) {
+            console.error('Payment error:', error)
+            showStatus(`❌ Payment failed: ${error.message}`, 'error')
+          } finally {
+            button.disabled = false
+            button.textContent = '🔒 Test Payment'
+          }
+        })
+        
+      } catch (error) {
+        console.error('TrustJS initialization error:', error)
+        showStatus(`❌ TrustJS initialization failed: ${error.message}`, 'error')
+      }
+    }
+  </script>
+</body>
+</html>

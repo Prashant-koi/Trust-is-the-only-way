@@ -1,0 +1,31 @@
+# Source files
+src/
+
+# Development files
+tests/
+examples/
+docs/
+
+# Configuration files
+.babelrc
+.eslintrc.json
+jest.config.js
+rollup.config.js
+tsconfig.json
+
+# Development dependencies
+node_modules/
+
+# IDE and OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Git files
+.git/
+.gitignore
+
+# Coverage and logs
+coverage/
+*.log

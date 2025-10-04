@@ -1,0 +1,85 @@
+{
+  "name": "trustjs",
+  "version": "1.0.0",
+  "description": "Secure MFA payment SDK with fraud detection and blockchain auditing",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "dev": "rollup -c -w",
+    "build": "npm run clean && rollup -c && npm run build:types && npm run build:css",
+    "build:css": "cp src/styles/trustjs.css dist/trustjs.css",
+    "build:types": "tsc --emitDeclarationOnly --outDir dist",
+    "clean": "rm -rf dist",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "lint": "eslint src --ext .js,.jsx,.ts,.tsx",
+    "format": "prettier --write src/**/*.{js,jsx,ts,tsx}",
+    "prepublishOnly": "npm run build && npm test"
+  },
+  "keywords": [
+    "payments",
+    "mfa",
+    "fraud-detection",
+    "blockchain",
+    "stripe",
+    "security",
+    "react",
+    "sdk"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/payshield/trustjs.git"
+  },
+  "homepage": "https://trustjs.dev",
+  "bugs": {
+    "url": "https://github.com/payshield/trustjs/issues"
+  },
+  "author": "PayShield Team <team@payshield.com>",
+  "license": "MIT",
+  "peerDependencies": {
+    "react": ">=16.8.0",
+    "react-dom": ">=16.8.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    }
+  },
+  "dependencies": {
+    "@stripe/stripe-js": "^8.0.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.23.0",
+    "@babel/preset-env": "^7.23.0",
+    "@babel/preset-react": "^7.23.0",
+    "@rollup/plugin-babel": "^6.0.4",
+    "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-replace": "^5.0.5",
+    "@rollup/plugin-terser": "^0.4.4",
+    "@stripe/react-stripe-js": "^5.0.0",
+    "@testing-library/jest-dom": "^6.1.0",
+    "@testing-library/react": "^13.4.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "eslint": "^8.52.0",
+    "identity-obj-proxy": "^3.0.0",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^30.2.0",
+    "prettier": "^3.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "rollup": "^4.9.0",
+    "rollup-plugin-postcss": "^4.0.2",
+    "typescript": "^5.3.0"
+  }
+}

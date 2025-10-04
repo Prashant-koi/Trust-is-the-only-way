@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TrustJS Test</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, sans-serif;
+      background: #1a1a2e;
+      color: white;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    
+    .product-card {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 20px;
+      margin: 20px 0;
+    }
+    
+    button {
+      background: #6c63ff;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    
+    button:hover {
+      background: #5a52d5;
+    }
+    
+    button:disabled {
+      background: #444;
+      cursor: not-allowed;
+    }
+    
+    .status {
+      margin-top: 20px;
+      padding: 12px;
+      border-radius: 6px;
+      display: none;
+    }
+    
+    .status.success {
+      background: rgba(0, 255, 0, 0.2);
+      border: 1px solid green;
+      display: block;
+    }
+    
+    .status.error {
+      background: rgba(255, 0, 0, 0.2);
+      border: 1px solid red;
+      display: block;
+    }
+    
+    .status.info {
+      background: rgba(0, 100, 255, 0.2);
+      border: 1px solid #0066ff;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔒 TrustJS SDK Test</h1>
+    <p>Testing the SDK connection and functionality</p>
+    
+    <div class="product-card">
+      <h3>💻 Test Product</h3>
+      <p>Price: $99.99</p>
+      <button id="test-btn">Test TrustJS Payment</button>
+    </div>
+    
+    <div id="status" class="status"></div>
+  </div>
+
+  <script>
+    // First, let's test if we can load anything at all
+    console.log('HTML loaded successfully!')
+    
+    function showStatus(message, type = 'info') {
+      const statusDiv = document.getElementById('status')
+      statusDiv.textContent = message
+      statusDiv.className = `status ${type}`
+    }
+    
+    // Test basic functionality first
+    document.getElementById('test-btn').addEventListener('click', async () => {
+      showStatus('Testing basic functionality...', 'info')
+      
+      try {
+        // Test fetch to backend
+        const response = await fetch('http://localhost:3001/health')
+        
+        if (response.ok) {
+          showStatus('✅ Backend connection successful! Ready to test TrustJS.', 'success')
+        } else {
+          throw new Error('Backend not responding')
+        }
+      } catch (error) {
+        showStatus(`❌ Backend connection failed: ${error.message}. Make sure your PayShield backend is running on port 3001.`, 'error')
+      }
+    })
+    
+    showStatus('🚀 Test page loaded. Click the button to test backend connection.', 'info')
+  </script>
+</body>
+</html>

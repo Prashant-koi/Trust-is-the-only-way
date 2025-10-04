@@ -377,6 +377,7 @@ app.post('/api/create-payment-intent', async (req, res) => {
 
 // Send OTP
 app.post('/api/send-otp', (req, res) => {
+  console.log('📥 Received send-otp request:', req.body);
   const { orderId, amount } = req.body;
   const otp = Math.floor(100000 + Math.random() * 900000).toString();
   otpStore[orderId] = { 
@@ -386,6 +387,7 @@ app.post('/api/send-otp', (req, res) => {
   };
   
   console.log(`📱 OTP for order ${orderId}: ${otp}`);
+  console.log(`💾 Stored in otpStore:`, otpStore[orderId]);
   
   // Return OTP in response for demo purposes
   res.json({ success: true, message: 'OTP sent', otp: otp });
@@ -393,10 +395,15 @@ app.post('/api/send-otp', (req, res) => {
 
 // Verify OTP and confirm Stripe payment
 app.post('/api/verify-otp', async (req, res) => {
+  console.log('📥 Received verify-otp request:', req.body);
   const { merchantId, orderId, otp, paymentIntentId } = req.body;
+  
+  console.log(`🔍 Looking for orderId in otpStore:`, orderId);
+  console.log(`🔍 Current otpStore:`, Object.keys(otpStore));
   
   const stored = otpStore[orderId];
   if (!stored) {
+    console.log(`❌ OTP not found for orderId: ${orderId}`);
     // Record failed MFA attempt
     recordTransaction('fraud', {
       merchantId,
@@ -407,6 +414,9 @@ app.post('/api/verify-otp', async (req, res) => {
     });
     return res.json({ success: false, message: 'OTP expired or not found' });
   }
+  
+  console.log(`✅ Found stored OTP:`, stored);
+  console.log(`🔍 Comparing OTPs - received: ${otp}, stored: ${stored.code}`);
   
   if (stored.code !== otp) {
     // Record failed MFA attempt

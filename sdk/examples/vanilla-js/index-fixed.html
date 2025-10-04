@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TrustJS Vanilla JavaScript Example</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Inter', system-ui, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      color: #f8f9ff;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      margin-bottom: 40px;
+    }
+    
+    .product-card {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      padding: 24px;
+      text-align: center;
+    }
+    
+    .product-image {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+    
+    .product-price {
+      font-size: 24px;
+      font-weight: 600;
+      color: #6c63ff;
+      margin: 16px 0;
+    }
+    
+    .status {
+      margin-top: 20px;
+      padding: 12px;
+      border-radius: 8px;
+      text-align: center;
+    }
+    
+    .status--success {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #10b981;
+    }
+    
+    .status--error {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #ef4444;
+    }
+    
+    .status--info {
+      background: rgba(59, 130, 246, 0.1);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      color: #3b82f6;
+    }
+
+    button {
+      background: #6c63ff;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 500;
+      transition: background-color 0.2s;
+      width: 100%;
+    }
+
+    button:hover {
+      background: #5a52d5;
+    }
+
+    button:disabled {
+      background: #4a5568;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1>🛒 TrustJS Vanilla JavaScript Demo</h1>
+      <p>Secure payments with MFA protection - No React required!</p>
+    </header>
+
+    <div class="product-grid">
+      <div class="product-card">
+        <div class="product-image">💻</div>
+        <h3>Gaming Laptop Pro</h3>
+        <p>High-performance laptop for gaming and development</p>
+        <div class="product-price">$1,299.99</div>
+        <button id="laptop-btn">
+          🔒 Buy Now
+        </button>
+      </div>
+
+      <div class="product-card">
+        <div class="product-image">📱</div>
+        <h3>Smartphone Ultra</h3>  
+        <p>Latest flagship smartphone with advanced features</p>
+        <div class="product-price">$899.99</div>
+        <button id="phone-btn">
+          🔒 Buy Now
+        </button>
+      </div>
+    </div>
+
+    <div id="status"></div>
+  </div>
+
+  <script>
+    console.log('🚀 TrustJS Demo page loaded successfully!')
+    
+    const statusDiv = document.getElementById('status')
+
+    function showStatus(message, type = 'info') {
+      statusDiv.innerHTML = `<div class="status status--${type}">${message}</div>`
+    }
+
+    // Test basic functionality first
+    async function testBackendConnection() {
+      try {
+        showStatus('Testing backend connection...', 'info')
+        const response = await fetch('http://localhost:3001/health')
+        
+        if (response.ok) {
+          showStatus('✅ Backend connected! Loading TrustJS SDK...', 'success')
+          loadTrustJSSDK()
+        } else {
+          throw new Error('Backend health check failed')
+        }
+      } catch (error) {
+        showStatus(`❌ Backend connection failed: ${error.message}. Make sure your PayShield backend is running.`, 'error')
+      }
+    }
+
+    async function loadTrustJSSDK() {
+      try {
+        // Dynamic import to load TrustJS SDK
+        const { default: TrustJS } = await import('../../dist/index.esm.js')
+        
+        // Initialize TrustJS
+        const trustjs = new TrustJS({
+          publishableKey: 'pk_test_51SEPdMHqjaPgoLNariaByJzqugHs05citHWNSmTx2z5Zkn9oH85qD1KYXRMubgt3PYa0q43hIZ0OAbLXmcoxMZWO00cd448f5V',
+          merchantId: 'demo_merchant_001',
+          apiUrl: 'http://localhost:3001',
+          theme: 'dark'
+        })
+
+        showStatus('🔒 TrustJS SDK loaded successfully! Click a product to test payment.', 'success')
+
+        // Set up event handlers
+        setupPaymentHandlers(trustjs)
+        
+      } catch (error) {
+        console.error('Failed to load TrustJS SDK:', error)
+        showStatus(`❌ Failed to load TrustJS SDK: ${error.message}`, 'error')
+      }
+    }
+
+    function setupPaymentHandlers(trustjs) {
+      async function handlePurchase(productName, amount, button) {
+        const orderId = `order_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+        
+        try {
+          button.disabled = true
+          button.innerHTML = '⏳ Processing...'
+          
+          showStatus('Creating secure payment session...', 'info')
+
+          // Create payment
+          const payment = await trustjs.createPayment({
+            amount,
+            orderId,
+            currency: 'usd',
+            customer: {
+              email: 'customer@example.com',
+              name: 'Demo Customer'
+            }
+          })
+
+          console.log('Payment created:', payment)
+
+          if (payment.mfaRequired) {
+            showStatus('🔐 MFA verification required. Check your backend terminal for OTP.', 'info')
+            
+            // Simulate MFA flow - in real app you'd show a proper form
+            const otp = prompt('Enter 6-digit OTP from your backend terminal:')
+            
+            if (otp && otp.length === 6) {
+              showStatus('Verifying MFA...', 'info')
+              
+              const verification = await trustjs.verifyMfa(orderId, otp)
+              
+              if (verification.success) {
+                showStatus(`🎉 Payment successful! You purchased ${productName} for $${amount}`, 'success')
+              } else {
+                throw new Error('MFA verification failed')
+              }
+            } else {
+              throw new Error('Valid OTP required')
+            }
+          } else {
+            showStatus(`🎉 Payment successful! You purchased ${productName} for $${amount}`, 'success')
+          }
+
+        } catch (error) {
+          console.error('Payment error:', error)
+          showStatus(`❌ Payment failed: ${error.message}`, 'error')
+        } finally {
+          button.disabled = false
+          button.innerHTML = '🔒 Buy Now'
+        }
+      }
+
+      // Event listeners
+      document.getElementById('laptop-btn').addEventListener('click', (e) => {
+        handlePurchase('Gaming Laptop Pro', 1299.99, e.target)
+      })
+
+      document.getElementById('phone-btn').addEventListener('click', (e) => {
+        handlePurchase('Smartphone Ultra', 899.99, e.target)
+      })
+    }
+
+    // Start the demo
+    showStatus('🚀 Initializing TrustJS Demo...', 'info')
+    testBackendConnection()
+  </script>
+</body>
+</html>
