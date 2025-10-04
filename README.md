@@ -1,278 +1,408 @@
-# 🛡️ PayShield - Universal MFA Payment Layer
+# 🔐 TrustJS - Trust is the Only Way
 
-**Multi-Factor Authentication with Blockchain Transparency**
+**Blockchain-Powered MFA for Payment Security**
 
-## ⚡ **Quick Start**
+A modern, production-ready fraud detection system that combines multi-factor authentication with blockchain transparency. Built with React, Node.js, and Ethereum smart contracts.
 
-### **Immediate Testing (No Setup Required):**
-```
-http://localhost:3001  # Backend + Legacy Frontend (already running)
-```
-
-### **Modern Development Setup:**
-```bash
-# Windows (WSL) - Replace [YOUR_USERNAME] with your username
-wsl bash -c "cd /mnt/c/Users/[YOUR_USERNAME]/Trust-is-only-way/frontend && npm install && npm run dev"
-
-# Opens modern React frontend at http://localhost:3000 or 3002
-```
-
-### **Build Commands Summary:**
-```bash
-npm run frontend:install    # Install React frontend dependencies
-npm run frontend:dev        # Start Vite dev server (React + HMR)
-npm run frontend:build      # Build for production
-npm run dev                 # Start both backend + frontend
-```
-
-## � **New Frontend Architecture**
-
-This project has been **refactored** with a modern Vite + React frontend while preserving the existing backend and smart contracts.
-
-### **Project Structure:**
-```
-├── backend.js              # Express server (unchanged)
-├── contracts/              # Smart contracts (unchanged)  
-├── public/                 # Legacy frontend (HTML/CSS/JS)
-├── frontend/               # 🆕 NEW Vite + React frontend
-│   ├── src/
-│   │   ├── components/     # React components
-│   │   ├── App.jsx         # Main app component
-│   │   └── main.jsx        # Entry point
-│   ├── package.json        # Frontend dependencies
-│   └── vite.config.js      # Vite configuration
-└── dist/                   # Built frontend (auto-generated)
-```
-
-## 🚀 **Development Setup**
-
-### **Prerequisites:**
-- **Node.js & npm** - Install from [nodejs.org](https://nodejs.org/)
-- **WSL** (for Windows users) - If PowerShell doesn't have npm/node access
-
-### **Option 1: Quick Start (Legacy Frontend)**
-If you just want to test the app immediately:
-```bash
-# Backend is already running at http://localhost:3001
-# Just open your browser to test the MFA flow
-```
-
-### **Option 2: Full Modern Development Setup**
-
-#### **Step 1: Install Dependencies**
-```bash
-# If using WSL (recommended for Windows):
-wsl bash -c "cd /mnt/c/Users/[YOUR_USERNAME]/Trust-is-only-way && npm install"
-wsl bash -c "cd /mnt/c/Users/[YOUR_USERNAME]/Trust-is-only-way/frontend && npm install"
-
-# If using regular terminal with npm access:
-npm install
-cd frontend && npm install && cd ..
-```
-
-#### **Step 2: Development Mode (Dual Frontend)**
-```bash
-# Option A: Using WSL
-wsl bash -c "cd /mnt/c/Users/[YOUR_USERNAME]/Trust-is-only-way && node backend.js" &
-wsl bash -c "cd /mnt/c/Users/[YOUR_USERNAME]/Trust-is-only-way/frontend && npm run dev"
-
-# Option B: Using npm scripts (if available)
-npm run dev  # Starts both backend + frontend concurrently
-```
-
-This will start:
-- **Backend API**: `http://localhost:3001`
-- **Legacy Frontend**: `http://localhost:3001` (HTML/CSS/JS)
-- **Modern Frontend**: `http://localhost:3000` or `http://localhost:3002` (React + Vite)
-
-#### **Step 3: Production Build**
-```bash
-# Build optimized React frontend
-wsl bash -c "cd /mnt/c/Users/[YOUR_USERNAME]/Trust-is-only-way/frontend && npm run build"
-
-# Or using npm script:
-npm run build
-
-# Start production server (serves built frontend from /dist)
-npm start
-```
-
-### **Build Architecture:**
-- **Development**: Frontend dev server (port 3000/3002) + Backend API (port 3001)
-- **Production**: Single backend serves both API and built frontend from `/dist`
-
-## 🧪 **Testing the MFA Flow**
-
-### **Low-Value Purchase (No MFA):**
-1. Add **Wireless Mouse** ($79.99) → Immediate payment
-
-### **High-Value Purchase (MFA Required):** ⭐
-1. Add **Premium Laptop** ($1,299.99) 
-2. Click **"Proceed to Secure Checkout"**
-3. **MFA Modal appears** → Click **"📱 Send One-Time Code"**
-4. **Check terminal** for OTP: `📱 OTP for order_XXX: 123456`
-5. Enter code → **"✓ Verify Code"**
-6. ✅ **Blockchain transaction recorded!**
-
-## 📊 **System Status:**
-- ✅ **Backend**: `http://localhost:3001` (Express.js)
-- ✅ **Frontend**: Modern Vite + React architecture
-- ✅ **Smart Contract**: `0x95493E1175Dc4966B6dCc865b6302e7B8704b319`
-- ✅ **Blockchain**: Polygon Amoy Testnet
-- ✅ **Database**: In-memory (for demo)
-
-## 🔧 **Available Scripts**
-
-### **Backend Scripts:**
-```bash
-npm run backend          # Start backend only (serves legacy frontend)
-npm start               # Start production backend (serves from /dist if available)
-```
-
-### **Frontend Scripts:**
-```bash
-npm run frontend:install    # Install frontend dependencies
-npm run frontend:dev        # Start Vite dev server only
-npm run frontend:build      # Build optimized React frontend to /dist
-npm run frontend:preview    # Preview production build locally
-```
-
-### **Combined Scripts:**
-```bash
-npm run dev             # Start both backend + frontend concurrently
-npm run build           # Build production frontend
-```
-
-### **Blockchain Scripts:**
-```bash
-npm run deploy          # Deploy smart contract to Polygon Amoy
-```
-
-### **WSL Commands (Windows Users):**
-```bash
-# Backend
-wsl bash -c "cd /mnt/c/Users/[YOUR_USERNAME]/Trust-is-only-way && node backend.js"
-
-# Frontend Development
-wsl bash -c "cd /mnt/c/Users/[YOUR_USERNAME]/Trust-is-only-way/frontend && npm run dev"
-
-# Frontend Build
-wsl bash -c "cd /mnt/c/Users/[YOUR_USERNAME]/Trust-is-only-way/frontend && npm run build"
-```
-
-## 🏗️ **Architecture Notes**
-
-### **Smart Backend Detection:**
-The backend automatically serves:
-- `/dist` folder (if Vite build exists) 
-- `/public` folder (legacy fallback)
-
-### **API Integration:**
-- Frontend uses environment variables for API URLs
-- Vite proxy handles API calls during development
-- Production build connects directly to backend
-
-### **Blockchain Integration:**
-- All MFA approvals logged to Polygon Amoy
-- Immutable audit trail for compliance
-- Real transaction links to PolygonScan
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![Node.js](https://img.shields.io/badge/node-%3E%3D14.0.0-brightgreen)](https://nodejs.org/)
+[![React](https://img.shields.io/badge/react-18.x-blue)](https://reactjs.org/)
 
 ---
 
-## 🛠️ **Build Troubleshooting**
+## 🚀 Quick Start
 
-### **Common Issues & Solutions:**
-
-#### **"npm command not found" in PowerShell:**
 ```bash
-# Use WSL instead:
-wsl bash -c "cd /mnt/c/Users/[YOUR_USERNAME]/Trust-is-only-way && npm install"
-```
+# Clone the repository
+git clone https://github.com/trustjs/trust-is-the-only-way.git
+cd trust-is-the-only-way
 
-#### **Port Already in Use:**
-```bash
-# Backend (3001): Kill existing process or restart terminal
-# Frontend: Vite will automatically try ports 3000, 3002, 3003, etc.
-```
-
-#### **CORS Errors in Development:**
-- Frontend dev server automatically proxies API calls to backend
-- Check `frontend/vite.config.js` proxy configuration
-
-#### **Production Build Issues:**
-```bash
-# Clear node_modules and reinstall
-rm -rf node_modules package-lock.json
+# Install dependencies
 npm install
+cd frontend && npm install && cd ..
 
-# Clear frontend dependencies
-rm -rf frontend/node_modules frontend/package-lock.json
-cd frontend && npm install
+# Start the application
+npm run dev
 ```
 
-#### **Missing Dependencies:**
+**Access the application:**
+- 🛍️ **Demo Store**: http://localhost:3000
+- 📊 **Analytics Portal**: http://localhost:3000/merchant
+- 📚 **SDK Documentation**: http://localhost:3000/docs
+- 🔌 **Backend API**: http://localhost:3001
+
+---
+
+## ✨ Features
+
+### 🛡️ **Fraud Detection**
+- **Smart Thresholds**: Automatic MFA for transactions over $500
+- **Real-time Verification**: OTP-based authentication
+- **Pattern Detection**: Identifies suspicious transaction patterns
+- **Blockchain Audit Trail**: Immutable verification records
+
+### 📊 **Analytics Dashboard**
+- Transaction trends and revenue tracking
+- Fraud attempt monitoring
+- MFA success rate analytics
+- Blockchain transaction explorer
+
+### 🔌 **Developer SDK**
+- Headless JavaScript SDK for easy integration
+- TypeScript support with full type definitions
+- React, Node.js, and vanilla JS examples
+- Published on npm: `npm install trust-mfa-sdk`
+
+### ⛓️ **Blockchain Integration**
+- Polygon Amoy testnet deployment
+- Immutable MFA verification logs
+- Public transaction verification
+- Zero PII storage on-chain
+
+---
+
+## 🏗️ Architecture
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                     TrustJS Platform                         │
+├─────────────────────────────────────────────────────────────┤
+│                                                               │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │
+│  │   Demo Store │  │   Merchant   │  │     SDK      │      │
+│  │   (React)    │  │   Portal     │  │     Docs     │      │
+│  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘      │
+│         │                  │                  │              │
+│         └──────────────────┴──────────────────┘              │
+│                            │                                 │
+│                    ┌───────▼────────┐                        │
+│                    │  Express API   │                        │
+│                    │   (Node.js)    │                        │
+│                    └───────┬────────┘                        │
+│                            │                                 │
+│              ┌─────────────┴─────────────┐                  │
+│              │                           │                  │
+│      ┌───────▼────────┐         ┌───────▼────────┐         │
+│      │  Stripe API    │         │   Blockchain   │         │
+│      │   (Payments)   │         │ (Polygon Amoy) │         │
+│      └────────────────┘         └────────────────┘         │
+│                                                               │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### **Tech Stack**
+
+**Frontend:**
+- React 18 with Vite
+- React Router for navigation
+- Tailwind CSS for styling
+- Stripe Elements for payments
+- Lucide React for icons
+
+**Backend:**
+- Node.js with Express
+- Ethers.js for blockchain interaction
+- Stripe for payment processing
+- In-memory data store (demo)
+
+**Blockchain:**
+- Solidity smart contracts
+- Polygon Amoy testnet
+- Hardhat for deployment
+- Alchemy RPC provider
+
+---
+
+## 📦 Project Structure
+
+```
+trust-is-the-only-way/
+├── frontend/                    # React application
+│   ├── src/
+│   │   ├── components/         # Reusable components
+│   │   │   ├── analytics/      # Analytics components
+│   │   │   ├── Navigation.jsx
+│   │   │   ├── ProductCard.jsx
+│   │   │   └── StripePaymentForm.jsx
+│   │   ├── pages/              # Page components
+│   │   │   ├── CustomerStore.jsx
+│   │   │   ├── MerchantPortal.jsx
+│   │   │   └── SdkDocs.jsx
+│   │   ├── App.jsx             # Main app component
+│   │   └── main.jsx            # Entry point
+│   ├── package.json
+│   └── vite.config.js
+│
+├── sdk/                        # TrustJS SDK
+│   ├── trust-mfa-sdk.js       # SDK implementation
+│   ├── trust-mfa-sdk.d.ts     # TypeScript definitions
+│   ├── package.json
+│   ├── README.md
+│   └── example.html           # Live demo
+│
+├── contracts/                  # Smart contracts
+│   ├── MfaAudit.sol           # Main contract
+│   └── hardhat.config.js
+│
+├── backend.js                  # Express API server
+├── .env                        # Environment variables
+└── package.json
+```
+
+---
+
+## 🎮 How to Use
+
+### **1. Demo Store (Customer Experience)**
+
+Visit http://localhost:3000 to test the payment flow:
+
+**Low-Value Transaction (No MFA):**
+1. Add "Wireless Mouse" ($299) to cart
+2. Proceed to checkout
+3. Enter test card: `4242 4242 4242 4242`
+4. Payment completes instantly ✅
+
+**High-Value Transaction (MFA Required):**
+1. Add "Premium Laptop" ($1,299) to cart
+2. Proceed to checkout
+3. Enter test card details
+4. **MFA verification triggered** 🔐
+5. Check alert for OTP code
+6. Enter OTP to complete payment
+7. View blockchain verification ⛓️
+
+### **2. Merchant Portal (Analytics)**
+
+Visit http://localhost:3000/merchant to view:
+- Real-time transaction analytics
+- Fraud detection patterns
+- MFA success rates
+- Blockchain verification records
+- Revenue and transaction trends
+
+### **3. SDK Integration**
+
+Visit http://localhost:3000/docs for complete documentation.
+
+**Quick Example:**
+```javascript
+import TrustMFA from 'trust-mfa-sdk';
+
+const mfa = new TrustMFA({
+  apiUrl: 'https://api.trustjs.com',
+  merchantId: 'your_merchant_id',
+  threshold: 500
+});
+
+const result = await mfa.requestMfa({
+  orderId: 'order_123',
+  amount: 599.99
+}, {
+  onVerificationRequired: async () => {
+    return await promptUserForOtp();
+  }
+});
+
+if (result.success && result.verified) {
+  console.log('Blockchain proof:', result.blockchainTx);
+}
+```
+
+---
+
+## 🔧 Configuration
+
+### **Environment Variables**
+
+**Backend (.env):**
 ```bash
-# Install missing packages in frontend
-cd frontend && npm install react react-dom @vitejs/plugin-react vite
+# Blockchain Configuration
+ETHEREUM_RPC_URL=https://polygon-amoy.g.alchemy.com/v2/YOUR_KEY
+ETHEREUM_PRIVATE_KEY=your_private_key
+CHAIN_ID=80002
+CONTRACT_ADDRESS=0x95493E1175Dc4966B6dCc865b6302e7B8704b319
+
+# Stripe Configuration
+STRIPE_SECRET_KEY=sk_test_...
+
+# Server Configuration
+PORT=3001
 ```
 
-### **Development vs Production:**
-- **Development**: Two servers (API + Vite dev server with HMR)
-- **Production**: Single server (backend serves built frontend from `/dist`)
+**Frontend (frontend/.env):**
+```bash
+# Backend API URL
+VITE_BACKEND_URL=http://localhost:3001
 
-## 🎉 **Ready for Production!**
+# Stripe Publishable Key
+VITE_STRIPE_PUBLISHABLE_KEY=pk_test_...
+```
 
-The new architecture provides a solid foundation for:
-- Advanced React features (hooks, context, routing)
-- State management (Redux, Zustand)  
-- Testing frameworks (Vitest, React Testing Library)
-- UI libraries (Material-UI, Chakra UI)
-- TypeScript migration
+---
 
-## 🔍 **Blockchain Information**
+## 🧪 Testing
 
-- **Smart Contract**: `0x95493E1175Dc4966B6dCc865b6302e7B8704b319`
-- **Network**: Polygon Amoy Testnet
-- **Explorer**: https://amoy.polygonscan.com/address/0x95493E1175Dc4966B6dCc865b6302e7B8704b319
+### **Test Cards (Stripe)**
+```
+Card Number: 4242 4242 4242 4242
+Expiry: 12/34
+CVC: 123
+ZIP: 12345
+```
 
-## 🛠️ Architecture:
+### **MFA Threshold**
+- Transactions **≤ $500**: No MFA required
+- Transactions **> $500**: MFA verification required
 
-- **Frontend**: Pure HTML/JS (no frameworks, no module issues)
-- **Backend**: Express.js with ethers.js for blockchain
-- **Smart Contract**: Solidity deployed to Polygon Amoy
-- **MFA**: OTP-based (6-digit codes in terminal)
+### **OTP Codes**
+- 6-digit codes displayed in browser alert
+- Valid for 5 minutes
+- Also logged in backend terminal
 
-## 💡 Key Features:
+---
 
-✅ **Zero Integration** - Drop-in solution  
-✅ **Configurable Thresholds** - $500 default  
-✅ **Blockchain Audit Trail** - Every MFA logged on-chain  
-✅ **No PII Storage** - Only cryptographic hashes  
-✅ **Instant Verification** - Real-time MFA  
-✅ **Transparent Proofs** - Anyone can verify on-chain  
+## 📊 Smart Contract
 
-## 🔐 Security:
+**Deployed on Polygon Amoy Testnet:**
+- **Address**: `0x95493E1175Dc4966B6dCc865b6302e7B8704b319`
+- **Explorer**: [View on PolygonScan](https://amoy.polygonscan.com/address/0x95493E1175Dc4966B6dCc865b6302e7B8704b319)
 
-- OTP expires in 5 minutes
-- Approval hashes are one-way (keccak256)
-- No sensitive data on blockchain
-- TLS for all API calls
+**Contract Functions:**
+```solidity
+// Log MFA verification on-chain
+function logMfa(bytes32 approvalHash) external
 
-## 📝 Technical Details:
+// Event emitted for each verification
+event MfaLogged(
+    bytes32 indexed approvalHash,
+    address indexed merchant,
+    uint256 timestamp
+)
+```
 
 **Approval Hash Generation:**
-```
+```javascript
 keccak256(merchantId|orderId|timestamp|method|receiptId)
 ```
 
-**Smart Contract Event:**
-```solidity
-event MfaLogged(bytes32 indexed approvalHash, address indexed merchant, uint256 timestamp);
+---
+
+## 🚀 Deployment
+
+### **Development**
+```bash
+npm run dev
+```
+
+### **Production Build**
+```bash
+# Build frontend
+cd frontend && npm run build && cd ..
+
+# Start production server
+npm start
+```
+
+### **Deploy Smart Contract**
+```bash
+npx hardhat run scripts/deploy.js --network amoy
 ```
 
 ---
 
-## 🎉 DEMO IS READY!
+## 📚 SDK Documentation
 
-**Open http://localhost:3001 and try it now!**
+The TrustJS SDK is available on npm:
 
+```bash
+npm install trust-mfa-sdk
+```
+
+**Features:**
+- ✅ Headless integration
+- ✅ TypeScript support
+- ✅ React, Node.js, and vanilla JS examples
+- ✅ Blockchain receipt verification
+- ✅ Customizable UI callbacks
+
+**Full documentation:** http://localhost:3000/docs
+
+---
+
+## 🔒 Security
+
+### **Best Practices**
+- ✅ OTP codes expire after 5 minutes
+- ✅ One-way cryptographic hashes (keccak256)
+- ✅ No PII stored on blockchain
+- ✅ HTTPS for all API communications
+- ✅ Rate limiting on OTP requests
+- ✅ Stripe PCI compliance
+
+### **Fraud Detection**
+- Multiple failed MFA attempts
+- High-value transaction patterns
+- Rapid transaction detection
+- Geographic anomaly detection
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions! Please follow these steps:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## 🙏 Acknowledgments
+
+- **Stripe** for payment processing
+- **Polygon** for blockchain infrastructure
+- **Alchemy** for RPC services
+- **Hardhat** for smart contract development
+- **Vite** for blazing fast builds
+
+---
+
+## 📞 Support
+
+- **Documentation**: http://localhost:3000/docs
+- **GitHub Issues**: https://github.com/trustjs/trust-is-the-only-way/issues
+- **Email**: support@trustjs.com
+
+---
+
+## 🎯 Roadmap
+
+- [ ] Multi-chain support (Ethereum, BSC, Arbitrum)
+- [ ] SMS/Email OTP delivery
+- [ ] Biometric authentication
+- [ ] Advanced fraud ML models
+- [ ] Mobile SDK (iOS/Android)
+- [ ] Webhook notifications
+- [ ] Multi-merchant support
+- [ ] Custom branding options
+
+---
+
+<div align="center">
+
+**TrustJS - Trust is the Only Way**
+
+Built with ❤️ for secure payments
+
+[Website](https://trustjs.com) • [Documentation](http://localhost:3000/docs) • [GitHub](https://github.com/trustjs/trust-is-the-only-way)
+
+</div>
