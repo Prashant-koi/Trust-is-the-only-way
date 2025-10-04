@@ -1,0 +1,41 @@
+{
+  "_format": "hh-sol-cache-2",
+  "files": {
+    "/home/barsat/Projects/Truth-is-the-only-way/Trust-is-the-only-way/contracts/contracts/MfaAudit.sol": {
+      "lastModificationDate": 1759552356531,
+      "contentHash": "e7d7a5dd6704a572e81b3ea6767aea9c",
+      "sourceName": "contracts/MfaAudit.sol",
+      "solcConfig": {
+        "version": "0.8.24",
+        "settings": {
+          "evmVersion": "paris",
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "MfaAudit"
+      ]
+    }
+  }
+}
