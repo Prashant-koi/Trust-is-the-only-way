@@ -387,7 +387,8 @@ app.post('/api/send-otp', (req, res) => {
   
   console.log(`📱 OTP for order ${orderId}: ${otp}`);
   
-  res.json({ success: true, message: 'OTP sent (check terminal)' });
+  // Return OTP in response for demo purposes
+  res.json({ success: true, message: 'OTP sent', otp: otp });
 });
 
 // Verify OTP and confirm Stripe payment

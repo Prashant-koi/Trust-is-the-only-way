@@ -21,7 +21,7 @@ function PaymentForm({ orderId, amount, onPaymentSuccess, onPaymentError }) {
   const [clientSecret, setClientSecret] = useState('')
   const [paymentIntentId, setPaymentIntentId] = useState('')
   const [paymentMethodId, setPaymentMethodId] = useState('')
-  const [email, setEmail] = useState('')
+  const [email, setEmail] = useState('demo@payshield.com')
   const [linkAuthenticated, setLinkAuthenticated] = useState(false)
   const [otpSent, setOtpSent] = useState(false)
   
@@ -147,7 +147,10 @@ function PaymentForm({ orderId, amount, onPaymentSuccess, onPaymentError }) {
       setPaymentStatus('Sending OTP...')
       console.log('🔍 Sending OTP request for order:', orderId) // Debug log
       
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001'}/api/send-otp`, {
+      const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001'
+      console.log('🔍 Backend URL:', backendUrl)
+      
+      const response = await fetch(`${backendUrl}/api/send-otp`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -168,13 +171,28 @@ function PaymentForm({ orderId, amount, onPaymentSuccess, onPaymentError }) {
       }
 
       const result = await response.json()
-      console.log('🔍 OTP Response Data:', result) // Debug log
+      console.log('🔍 Full OTP Response:', JSON.stringify(result, null, 2)) // Debug log
+      console.log('🔍 OTP Value Type:', typeof result.otp, 'Value:', result.otp) // Debug the OTP specifically
 
       if (result.success) {
         setOtpSent(true)
         setShowMfa(true)
-        setPaymentStatus('✅ OTP sent! Check your backend terminal for the code.')
-        console.log('🔍 CHECK YOUR BACKEND TERMINAL FOR OTP!')
+        
+        // Check if OTP exists in response
+        const otpCode = result.otp
+        if (otpCode) {
+          setPaymentStatus('✅ OTP sent! Enter the code shown in the alert.')
+          console.log('✅ OTP Code received:', otpCode)
+          
+          // Show OTP in alert for demo purposes
+          setTimeout(() => {
+            alert(`🔐 Your OTP Code: ${otpCode}\n\nPlease enter this 6-digit code in the verification form.`)
+          }, 500)
+        } else {
+          setPaymentStatus('✅ OTP sent! Check the browser console for the code.')
+          console.error('⚠️ OTP not found in response. Full response:', result)
+          alert('⚠️ Backend did not return OTP. Please restart your backend server and try again.')
+        }
       } else {
         throw new Error(result.message || 'Failed to send OTP')
       }
@@ -329,15 +347,69 @@ function PaymentForm({ orderId, amount, onPaymentSuccess, onPaymentError }) {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="your@email.com"
-                className="w-full px-4 py-3 bg-white/8 border border-white/15 rounded-lg text-theme-text placeholder-theme-text/50 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-purple-400"
+                className="w-full px-4 py-3 bg-[#1a1a2e] border border-white/20 rounded-lg text-theme-text placeholder-theme-text/50 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-purple-400"
               />
             </div>
 
             {/* Card Information */}
             <div>
-              <label className="block text-sm font-medium text-theme-text mb-3">
-                Card Information
-              </label>
+              <div className="flex items-center justify-between mb-3">
+                <label className="block text-sm font-medium text-theme-text">
+                  Card Information
+                </label>
+                <button
+                  type="button"
+                  onClick={async () => {
+                    const cardElement = elements.getElement(CardElement)
+                    if (cardElement) {
+                      // Clear the element first
+                      cardElement.clear()
+                      // Focus it
+                      cardElement.focus()
+                      
+                      // Simulate typing the test card number
+                      setPaymentStatus('✨ Auto-filling test card data...')
+                      
+                      // Use clipboard API to help user paste
+                      try {
+                        await navigator.clipboard.writeText('4242424242424242')
+                        setPaymentStatus('📋 Test card number copied! Paste it (Ctrl+V / Cmd+V) into the card field, then type: 1234, 123, 12345')
+                        
+                        // Auto-clear message after 8 seconds
+                        setTimeout(() => setPaymentStatus(''), 8000)
+                      } catch (err) {
+                        setPaymentStatus('💡 Type: 4242 4242 4242 4242, then 12/34, 123, 12345')
+                        setTimeout(() => setPaymentStatus(''), 5000)
+                      }
+                    }
+                  }}
+                  className="text-xs px-3 py-1.5 bg-purple-500/20 hover:bg-purple-500/30 text-purple-400 border border-purple-500/30 rounded-full transition-colors font-medium"
+                >
+                  ⚡ Fill Test Data
+                </button>
+              </div>
+              <div className="mb-3 p-3 bg-cyan-400/10 border border-cyan-400/20 rounded-lg">
+                <p className="text-xs text-cyan-400 font-medium mb-2">💳 Demo Test Card:</p>
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  <div className="flex items-center gap-1">
+                    <span className="text-theme-text/60">Card:</span>
+                    <code className="text-theme-text font-mono bg-white/10 px-1.5 py-0.5 rounded">4242 4242 4242 4242</code>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <span className="text-theme-text/60">Expiry:</span>
+                    <code className="text-theme-text font-mono bg-white/10 px-1.5 py-0.5 rounded">12/34</code>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <span className="text-theme-text/60">CVC:</span>
+                    <code className="text-theme-text font-mono bg-white/10 px-1.5 py-0.5 rounded">123</code>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <span className="text-theme-text/60">ZIP:</span>
+                    <code className="text-theme-text font-mono bg-white/10 px-1.5 py-0.5 rounded">12345</code>
+                  </div>
+                </div>
+                <p className="text-xs text-theme-text/50 mt-2">💡 Click "Fill Test Data" button to copy card number to clipboard</p>
+              </div>
               <div className="p-4 bg-white/8 border-2 border-white/15 rounded-lg focus-within:border-purple-400 focus-within:ring-2 focus-within:ring-purple-400/20 transition-all min-h-[50px]">
                 <CardElement 
                   options={cardElementOptions}
@@ -375,13 +447,7 @@ function PaymentForm({ orderId, amount, onPaymentSuccess, onPaymentError }) {
               )}
             </button>
 
-            {/* Test Card Info */}
-            <div className="bg-blue-400/10 border border-blue-400/20 rounded-lg p-3">
-              <p className="text-xs text-blue-400 font-medium mb-1">💳 Test Mode - Use these card numbers:</p>
-              <p className="text-xs text-theme-text/70">• 4242 4242 4242 4242 (Visa)</p>
-              <p className="text-xs text-theme-text/70">• 5555 5555 5555 4444 (Mastercard)</p>
-              <p className="text-xs text-theme-text/70">• Any future date • Any 3-digit CVC</p>
-            </div>
+
           </form>
         ) : (
           <form onSubmit={handleMfaSubmit} className="space-y-4">
@@ -420,10 +486,11 @@ function PaymentForm({ orderId, amount, onPaymentSuccess, onPaymentError }) {
                 maxLength={6}
                 autoComplete="one-time-code"
                 autoFocus
-                className="w-full px-4 py-4 bg-white/8 border-2 border-white/15 rounded-lg text-theme-text placeholder-theme-text/50 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-purple-400 text-center text-xl tracking-[0.5em] font-mono transition-all"
+                className="w-full px-4 py-4 bg-[#1a1a2e] border-2 border-purple-400/30 rounded-lg text-theme-text placeholder-theme-text/40 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-purple-400 text-center text-2xl tracking-[0.5em] font-mono transition-all"
                 style={{
                   caretColor: '#6c63ff',
-                  letterSpacing: '0.5em'
+                  letterSpacing: '0.5em',
+                  color: '#f8f9ff'
                 }}
               />
               <p className="text-xs text-theme-text/50 mt-2 text-center">
