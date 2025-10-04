@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import ProductGrid from '../components/ProductGrid'
 import Cart from '../components/Cart'
-import MfaModal from '../components/MfaModal'
+import StripePaymentForm from '../components/StripePaymentForm'
 import Message from '../components/Message'
 
 const PRODUCTS = [
@@ -15,7 +15,7 @@ const MERCHANT_ID = 'demo_merchant_001'
 
 function CustomerStore() {
   const [cart, setCart] = useState([])
-  const [showMfaModal, setShowMfaModal] = useState(false)
+  const [showPayment, setShowPayment] = useState(false)
   const [currentOrderId, setCurrentOrderId] = useState(null)
   const [message, setMessage] = useState({ text: '', isError: false })
   const [isProcessing, setIsProcessing] = useState(false)
@@ -39,58 +39,31 @@ function CustomerStore() {
       return
     }
 
-    setIsProcessing(true)
-    showMessage('Checking payment requirements...')
-
+    // Generate order ID and show Stripe payment form
     const orderId = 'order_' + Date.now()
     setCurrentOrderId(orderId)
-    const total = calculateTotal()
-
-    try {
-      // Step 1: Preauth
-      const response = await fetch(`${BACKEND_URL}/api/preauth`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          merchantId: MERCHANT_ID,
-          orderId: orderId,
-          amount: total,
-          currency: 'USD'
-        })
-      })
-
-      const preauth = await response.json()
-      console.log('Preauth:', preauth)
-
-      if (!preauth.mfaRequired) {
-        // No MFA needed
-        showMessage('✅ Payment successful! No MFA required for this amount.')
-        setCart([])
-        setIsProcessing(false)
-        return
-      }
-
-      // Step 2: Show MFA modal
-      showMessage('MFA required. Please verify your identity...')
-      setShowMfaModal(true)
-      setIsProcessing(false)
-
-    } catch (error) {
-      showMessage('❌ Error: ' + error.message, true)
-      setIsProcessing(false)
-    }
+    setShowPayment(true)
+    showMessage('Please complete your payment below...')
   }
 
-  const handleMfaSuccess = (receipt) => {
-    setShowMfaModal(false)
-    let msg = `✅ Payment Successful!<br><br>
-      Order: ${receipt.orderId}<br>
-      Method: ${receipt.method.toUpperCase()}<br>
-      Receipt: ${receipt.receiptId}<br>
-      Hash: ${receipt.approvalHash.substring(0, 20)}...`
+  const handlePaymentSuccess = (result) => {
+    setShowPayment(false)
     
-    if (receipt.blockchainTx) {
-      msg += `<br><br>⛓️ <a href="${receipt.blockchainTx.explorerUrl}" target="_blank">View on Blockchain ↗</a>`
+    let msg = `✅ Payment Successful!<br><br>
+      Order: ${result.orderId}<br>
+      Amount: $${result.amount}<br>
+      Payment ID: ${result.paymentIntent.id}<br>`
+    
+    if (result.mfaUsed) {
+      msg += `MFA: ${result.mfaReceipt.method.toUpperCase()}<br>
+      Receipt: ${result.mfaReceipt.receiptId}<br>
+      Hash: ${result.mfaReceipt.approvalHash.substring(0, 20)}...`
+      
+      if (result.mfaReceipt.blockchainTx) {
+        msg += `<br><br>⛓️ <a href="${result.mfaReceipt.blockchainTx.explorerUrl}" target="_blank">View on Blockchain ↗</a>`
+      }
+    } else {
+      msg += `MFA: Not required (amount under threshold)`
     }
     
     showMessage(msg)
@@ -98,9 +71,9 @@ function CustomerStore() {
     setIsProcessing(false)
   }
 
-  const handleMfaCancel = () => {
-    setShowMfaModal(false)
-    showMessage('❌ Payment cancelled', true)
+  const handlePaymentError = (error) => {
+    setShowPayment(false)
+    showMessage(`❌ Payment failed: ${error.message}`, true)
     setIsProcessing(false)
   }
 
@@ -122,15 +95,23 @@ function CustomerStore() {
 
       <Message message={message} />
 
-      {showMfaModal && (
-        <MfaModal
-          orderId={currentOrderId}
-          amount={calculateTotal()}
-          onSuccess={handleMfaSuccess}
-          onCancel={handleMfaCancel}
-          backendUrl={BACKEND_URL}
-          merchantId={MERCHANT_ID}
-        />
+      {showPayment && (
+        <div className="payment-overlay">
+          <div className="payment-modal">
+            <button 
+              className="close-payment" 
+              onClick={() => setShowPayment(false)}
+            >
+              ✕
+            </button>
+            <StripePaymentForm
+              orderId={currentOrderId}
+              amount={calculateTotal()}
+              onPaymentSuccess={handlePaymentSuccess}
+              onPaymentError={handlePaymentError}
+            />
+          </div>
+        </div>
       )}
     </div>
   )

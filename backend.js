@@ -4,6 +4,8 @@ const path = require('path');
 const { ethers } = require('ethers');
 require('dotenv').config();
 
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -92,11 +94,11 @@ function detectFraudPatterns() {
 
 // Blockchain transaction querying
 async function getBlockchainTransactions() {
-  if (!contract) return [];
+  if (!contract || !provider) return [];
   
   try {
     // Get current block number and query only 9 blocks to stay within free tier limit
-    const currentBlock = await contract.provider.getBlockNumber();
+    const currentBlock = await provider.getBlockNumber();
     const fromBlock = Math.max(0, currentBlock - 9); // Last 9 blocks to be safe
     const toBlock = currentBlock;
     
@@ -110,21 +112,13 @@ async function getBlockchainTransactions() {
       blockNumber: event.blockNumber,
       approvalHash: event.args.approvalHash,
       merchant: event.args.merchant,
-      timestamp: new Date(event.args.timestamp.toNumber() * 1000),
+      timestamp: new Date(Number(event.args.timestamp) * 1000),
       explorerUrl: `https://amoy.polygonscan.com/tx/${event.transactionHash}`
     }));
   } catch (error) {
     console.error('Error fetching blockchain transactions:', error);
-    // Return sample data if blockchain query fails
-    return [{
-      transactionHash: '0x1234567890abcdef1234567890abcdef12345678',
-      blockNumber: 99999,
-      approvalHash: 'sample_approval_hash_12345',
-      merchant: '0x' + '1'.repeat(40),
-      timestamp: new Date(Date.now() - 300000), // 5 minutes ago
-      explorerUrl: 'https://amoy.polygonscan.com/tx/0x1234567890abcdef1234567890abcdef12345678',
-      isSample: true
-    }];
+    // Return empty array instead of sample data to avoid confusion
+    return [];
   }
 }
 
@@ -300,35 +294,58 @@ app.get('/api/merchant/analytics', async (req, res) => {
   });
 });
 
-// Preauth - check if MFA is required
-app.post('/api/preauth', (req, res) => {
-  const { merchantId, orderId, amount, currency } = req.body;
-  const threshold = merchantThresholds[merchantId] || merchantThresholds.default;
-  const mfaRequired = amount > threshold;
-  
-  console.log(`📋 Preauth: Order ${orderId}, Amount $${amount}, MFA ${mfaRequired ? 'REQUIRED' : 'NOT REQUIRED'}`);
-  
-  // Record transaction attempt
-  if (!mfaRequired) {
-    // Low-value transaction completed immediately
+// Create Stripe Payment Intent with MFA check
+app.post('/api/create-payment-intent', async (req, res) => {
+  try {
+    const { merchantId, orderId, amount, currency = 'usd' } = req.body;
+    const threshold = merchantThresholds[merchantId] || merchantThresholds.default;
+    const mfaRequired = amount > threshold;
+    
+    console.log(`� Creating Payment Intent: Order ${orderId}, Amount $${amount}, MFA ${mfaRequired ? 'REQUIRED' : 'NOT REQUIRED'}`);
+    
+    // Create Stripe Payment Intent
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: Math.round(amount * 100), // Stripe uses cents
+      currency,
+      confirmation_method: 'automatic', // Allow frontend confirmation
+      confirm: false, // Don't auto-confirm, wait for frontend
+      metadata: {
+        orderId,
+        merchantId,
+        mfaRequired: mfaRequired.toString(),
+        payshieldProcessed: 'true'
+      }
+    });
+
+    // Record transaction attempt
     recordTransaction('transaction', {
       merchantId,
       orderId,
       amount,
-      success: true,
+      success: !mfaRequired,
       mfaUsed: false,
-      method: 'none',
-      riskScore: 'low'
+      method: mfaRequired ? 'pending' : 'none',
+      riskScore: mfaRequired ? 'medium' : 'low',
+      stripePaymentIntentId: paymentIntent.id
+    });
+
+    res.json({
+      success: true,
+      clientSecret: paymentIntent.client_secret,
+      paymentIntentId: paymentIntent.id,
+      mfaRequired,
+      methods: mfaRequired ? ['otp'] : [],
+      orderId,
+      threshold,
+      requiresAction: mfaRequired
+    });
+  } catch (error) {
+    console.error('Error creating payment intent:', error);
+    res.status(500).json({ 
+      error: 'Failed to create payment intent',
+      message: error.message 
     });
   }
-  
-  res.json({
-    success: true,
-    mfaRequired,
-    methods: ['otp'],
-    orderId,
-    threshold
-  });
 });
 
 // Send OTP
@@ -346,9 +363,9 @@ app.post('/api/send-otp', (req, res) => {
   res.json({ success: true, message: 'OTP sent (check terminal)' });
 });
 
-// Verify OTP and log to blockchain
+// Verify OTP and confirm Stripe payment
 app.post('/api/verify-otp', async (req, res) => {
-  const { merchantId, orderId, otp } = req.body;
+  const { merchantId, orderId, otp, paymentIntentId } = req.body;
   
   const stored = otpStore[orderId];
   if (!stored) {
@@ -430,6 +447,8 @@ app.post('/api/verify-otp', async (req, res) => {
     riskScore: 'low'
   });
 
+  // Note: Stripe payment confirmation is handled on frontend after MFA verification
+
   // Record successful transaction
   recordTransaction('transaction', {
     merchantId,
@@ -439,7 +458,8 @@ app.post('/api/verify-otp', async (req, res) => {
     mfaUsed: true,
     method: 'otp',
     riskScore: 'low',
-    blockchainTx: blockchainTx?.hash
+    blockchainTx: blockchainTx?.hash,
+    stripePaymentIntentId: paymentIntentId
   });
   
   res.json({
