@@ -58,13 +58,14 @@ function MerchantPortal() {
   }, [])
 
   const calculateFraudRate = () => {
-    const total = analyticsData.totalTransactions + analyticsData.fraudAttempts
-    return total > 0 ? ((analyticsData.fraudAttempts / total) * 100).toFixed(2) : 0
+    const total = (analyticsData.totalTransactions || 0) + (analyticsData.fraudAttempts || 0)
+    return total > 0 ? (((analyticsData.fraudAttempts || 0) / total) * 100).toFixed(2) : 0
   }
 
   const calculateMfaSuccessRate = () => {
-    return analyticsData.mfaUsage > 0 ? 
-      ((analyticsData.successfulTransactions / analyticsData.mfaUsage) * 100).toFixed(2) : 0
+    const mfaUsage = analyticsData.mfaUsage || 0
+    const successfulTransactions = analyticsData.successfulTransactions || 0
+    return mfaUsage > 0 ? ((successfulTransactions / mfaUsage) * 100).toFixed(2) : 0
   }
 
   if (isLoading) {
@@ -129,7 +130,7 @@ function MerchantPortal() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-theme-text/70">Total Revenue</p>
-                <p className="text-2xl font-bold text-theme-text">${analyticsData.totalRevenue.toLocaleString()}</p>
+                <p className="text-2xl font-bold text-theme-text">${(analyticsData.totalRevenue || 0).toLocaleString()}</p>
                 <p className="text-sm text-green-400 mt-1">+12.5% from last month</p>
               </div>
               <div className="h-12 w-12 bg-green-500/10 rounded-lg flex items-center justify-center border border-green-500/20">
@@ -142,7 +143,7 @@ function MerchantPortal() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-theme-text/70">Completed Transactions</p>
-                <p className="text-2xl font-bold text-theme-text">{analyticsData.totalTransactions.toLocaleString()}</p>
+                <p className="text-2xl font-bold text-theme-text">{(analyticsData.totalTransactions || 0).toLocaleString()}</p>
                 <p className="text-sm text-green-400 mt-1">+8.2% from yesterday</p>
               </div>
               <div className="h-12 w-12 bg-green-500/10 rounded-lg flex items-center justify-center border border-green-500/20">
@@ -155,7 +156,7 @@ function MerchantPortal() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-theme-text/70">Fraud Attempts</p>
-                <p className="text-2xl font-bold text-theme-text">{analyticsData.fraudAttempts.toLocaleString()}</p>
+                <p className="text-2xl font-bold text-theme-text">{(analyticsData.fraudAttempts || 0).toLocaleString()}</p>
                 <p className="text-sm text-red-400 mt-1">{calculateFraudRate()}% fraud rate</p>
               </div>
               <div className="h-12 w-12 bg-red-500/10 rounded-lg flex items-center justify-center border border-red-500/20">
@@ -168,7 +169,7 @@ function MerchantPortal() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-theme-text/70">MFA Verifications</p>
-                <p className="text-2xl font-bold text-theme-text">{analyticsData.mfaUsage.toLocaleString()}</p>
+                <p className="text-2xl font-bold text-theme-text">{(analyticsData.mfaUsage || 0).toLocaleString()}</p>
                 <p className="text-sm text-purple-400 mt-1">{calculateMfaSuccessRate()}% success rate</p>
               </div>
               <div className="h-12 w-12 bg-purple-500/10 rounded-lg flex items-center justify-center border border-purple-500/20">

@@ -5,117 +5,29 @@ import ShoppingCart from '../components/ShoppingCart'
 import StripePaymentForm from '../components/StripePaymentForm'
 import Message from '../components/Message'
 
-// Product catalog with diverse items
+// Demo products - one low-value, one high-value to demonstrate MFA threshold
 const PRODUCTS = [
   { 
     id: 1, 
-    name: 'Gaming Mouse Pro', 
-    price: 79.99, 
-    category: 'Gaming',
+    name: 'Wireless Mouse', 
+    price: 299.00, 
+    category: 'Electronics',
     image: '🖱️',
-    description: 'High-precision gaming mouse with RGB lighting',
+    description: 'Premium wireless mouse with ergonomic design',
     rating: 4.8,
     stock: 15,
-    features: ['16000 DPI', 'RGB Lighting', 'Ergonomic Design']
+    features: ['Wireless Connectivity', 'Ergonomic Design', '6-Month Battery Life']
   },
   { 
     id: 2, 
-    name: 'Mechanical Keyboard Elite', 
-    price: 149.99, 
-    category: 'Gaming',
-    image: '⌨️',
-    description: 'Premium mechanical keyboard with tactile switches',
-    rating: 4.9,
-    stock: 8,
-    features: ['Cherry MX Switches', 'Backlit Keys', 'USB-C']
-  },
-  { 
-    id: 3, 
     name: 'Premium Laptop', 
-    price: 1299.99, 
-    category: 'Computers',
+    price: 1299.00, 
+    category: 'Electronics',
     image: '💻',
     description: 'High-performance laptop for professionals',
-    rating: 4.7,
-    stock: 5,
-    features: ['16GB RAM', '512GB SSD', '15.6" Display']
-  },
-  { 
-    id: 4, 
-    name: 'Wireless Headphones', 
-    price: 199.99, 
-    category: 'Audio',
-    image: '🎧',
-    description: 'Premium noise-cancelling headphones',
-    rating: 4.6,
-    stock: 12,
-    features: ['Active ANC', '30h Battery', 'Bluetooth 5.0']
-  },
-  { 
-    id: 5, 
-    name: 'Smartphone Pro', 
-    price: 899.99, 
-    category: 'Mobile',
-    image: '📱',
-    description: 'Latest smartphone with advanced camera',
-    rating: 4.8,
-    stock: 7,
-    features: ['108MP Camera', '5G Ready', '128GB Storage']
-  },
-  { 
-    id: 6, 
-    name: 'Tablet Ultra', 
-    price: 599.99, 
-    category: 'Mobile',
-    image: '📱',
-    description: 'Professional tablet for creativity',
-    rating: 4.5,
-    stock: 10,
-    features: ['11" Display', 'Stylus Support', '256GB Storage']
-  },
-  { 
-    id: 7, 
-    name: 'Smart Watch', 
-    price: 299.99, 
-    category: 'Wearables',
-    image: '⌚',
-    description: 'Advanced fitness and smart features',
-    rating: 4.4,
-    stock: 20,
-    features: ['Heart Rate Monitor', 'GPS', 'Water Resistant']
-  },
-  { 
-    id: 8, 
-    name: 'Wireless Speaker', 
-    price: 129.99, 
-    category: 'Audio',
-    image: '🔊',
-    description: 'Portable speaker with rich sound',
-    rating: 4.3,
-    stock: 18,
-    features: ['360° Sound', '12h Battery', 'Waterproof']
-  },
-  { 
-    id: 9, 
-    name: 'Gaming Monitor', 
-    price: 449.99, 
-    category: 'Gaming',
-    image: '🖥️',
-    description: '27" 4K gaming monitor with high refresh rate',
-    rating: 4.7,
-    stock: 6,
-    features: ['4K Resolution', '144Hz', 'HDR Support']
-  },
-  { 
-    id: 10, 
-    name: 'USB-C Hub', 
-    price: 89.99, 
-    category: 'Accessories',
-    image: '🔌',
-    description: 'Multi-port hub with fast charging',
-    rating: 4.2,
-    stock: 25,
-    features: ['7-in-1 Hub', 'USB-C PD', 'HDMI 4K']
+    rating: 4.9,
+    stock: 8,
+    features: ['16GB RAM', '512GB SSD', '15.6" 4K Display']
   }
 ]
 
@@ -126,19 +38,8 @@ function CustomerStore() {
   const [cart, setCart] = useState([])
   const [showCart, setShowCart] = useState(false)
   const [showPayment, setShowPayment] = useState(false)
-  const [searchTerm, setSearchTerm] = useState('')
-  const [selectedCategory, setSelectedCategory] = useState('All')
-  const [viewMode, setViewMode] = useState('grid')
   const [message, setMessage] = useState(null)
   const [wishlist, setWishlist] = useState(new Set())
-
-  const categories = ['All', 'Gaming', 'Computers', 'Audio', 'Mobile', 'Wearables', 'Accessories']
-
-  const filteredProducts = PRODUCTS.filter(product => {
-    const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesCategory = selectedCategory === 'All' || product.category === selectedCategory
-    return matchesSearch && matchesCategory
-  })
 
   const addToCart = (product) => {
     setCart(prevCart => {
@@ -218,116 +119,119 @@ function CustomerStore() {
 
   return (
     <div className="min-h-screen">
-      {/* Hero Section */}
       <div className="page-shell">
-        <div className="page-header">
-          <div>
-            <p className="eyebrow">Premium Technology Store</p>
-            <h1>Secure Shopping Experience</h1>
-            <p className="subtitle">
-              Discover premium tech products with advanced fraud protection and seamless checkout experience.
-            </p>
+        {/* Hero Section */}
+        <div className="text-center max-w-4xl mx-auto mb-12">
+          <p className="eyebrow">PayShield Interactive Demo</p>
+          <h1 className="text-4xl md:text-5xl font-bold text-theme-text mb-4">
+            Experience Fraud Detection in Action
+          </h1>
+          <p className="text-lg text-theme-text/70 mb-8 max-w-2xl mx-auto">
+            Test our blockchain-powered MFA system with real payment flows. See how transactions are secured and verified.
+          </p>
+          
+          {/* Action Buttons */}
+          <div className="flex flex-wrap gap-4 justify-center mb-8">
+            <a 
+              href="/merchant" 
+              className="inline-flex items-center gap-2 px-8 py-4 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-xl transition-all duration-200 border border-purple-500 shadow-lg shadow-purple-500/20"
+            >
+              📊 View Merchant Portal
+            </a>
+            <button 
+              className="inline-flex items-center gap-2 px-8 py-4 bg-white/10 hover:bg-white/15 text-theme-text font-semibold rounded-xl transition-all duration-200 border border-white/20"
+            >
+              📦 Integrate Our SDK
+            </button>
           </div>
-          <div className="glass-panel" style={{minWidth: '220px'}}>
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-sm font-medium text-theme-text/70">Shopping Cart</span>
+
+          {/* Cart Summary Badge */}
+          {getTotalItems() > 0 && (
+            <div className="inline-flex items-center gap-3 px-6 py-3 bg-purple-500/10 border border-purple-500/30 rounded-full">
+              <ShoppingBag className="h-5 w-5 text-purple-400" />
+              <span className="text-theme-text font-medium">
+                {getTotalItems()} {getTotalItems() === 1 ? 'item' : 'items'} · ${getTotalAmount().toFixed(2)}
+              </span>
               <button
                 onClick={() => setShowCart(true)}
-                className="relative p-2 rounded-lg bg-white/8 hover:bg-white/12 transition-all duration-200 border border-white/10"
+                className="px-4 py-1.5 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-full transition-colors"
               >
-                <ShoppingBag className="h-5 w-5" />
-                {getTotalItems() > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-purple-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                    {getTotalItems()}
-                  </span>
-                )}
+                View Cart
               </button>
             </div>
-            <div className="text-2xl font-bold text-theme-text">${getTotalAmount().toFixed(2)}</div>
-            <div className="text-sm text-theme-text/60">{getTotalItems()} items</div>
-          </div>
+          )}
         </div>
 
-        {/* Search and Filters */}
-        <div className="glass-panel">
-          <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
-            <div className="flex-1 max-w-md">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-theme-text/50 h-4 w-4" />
-                <input
-                  type="text"
-                  placeholder="Search products..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 bg-white/8 border border-white/15 rounded-lg text-theme-text placeholder-theme-text/50 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                />
+        {/* How It Works */}
+        <div className="glass-panel mb-12">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl font-bold text-theme-text mb-2">How It Works</h2>
+            <p className="text-theme-text/60">Follow these simple steps to test the fraud detection system</p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="relative">
+              <div className="flex flex-col items-center text-center">
+                <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center text-white text-2xl font-bold mb-4 shadow-lg shadow-purple-500/30">
+                  1
+                </div>
+                <h3 className="text-lg font-semibold text-theme-text mb-2">Select Products</h3>
+                <p className="text-sm text-theme-text/60 leading-relaxed">
+                  Choose from our demo products. Try both low and high-value items to see different security flows.
+                </p>
               </div>
-            </div>
-            
-            <div className="flex gap-2 flex-wrap">
-              {categories.map(category => (
-                <button
-                  key={category}
-                  onClick={() => setSelectedCategory(category)}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                    selectedCategory === category
-                      ? 'bg-purple-600 text-white border border-purple-500'
-                      : 'bg-white/8 text-theme-text/70 hover:bg-white/12 border border-white/15'
-                  }`}
-                >
-                  {category}
-                </button>
-              ))}
+              {/* Connector Line */}
+              <div className="hidden md:block absolute top-8 left-[calc(50%+2rem)] w-[calc(100%-4rem)] h-0.5 bg-gradient-to-r from-purple-500/50 to-cyan-500/50"></div>
             </div>
 
-            <div className="flex gap-2">
-              <button
-                onClick={() => setViewMode('grid')}
-                className={`p-2 rounded-lg transition-all duration-200 border ${
-                  viewMode === 'grid' 
-                    ? 'bg-white/15 border-white/25' 
-                    : 'bg-white/8 hover:bg-white/12 border-white/15'
-                }`}
-              >
-                <Grid className="h-4 w-4" />
-              </button>
-              <button
-                onClick={() => setViewMode('list')}
-                className={`p-2 rounded-lg transition-all duration-200 border ${
-                  viewMode === 'list' 
-                    ? 'bg-white/15 border-white/25' 
-                    : 'bg-white/8 hover:bg-white/12 border-white/15'
-                }`}
-              >
-                <List className="h-4 w-4" />
-              </button>
+            <div className="relative">
+              <div className="flex flex-col items-center text-center">
+                <div className="w-16 h-16 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-2xl flex items-center justify-center text-white text-2xl font-bold mb-4 shadow-lg shadow-cyan-500/30">
+                  2
+                </div>
+                <h3 className="text-lg font-semibold text-theme-text mb-2">Complete Checkout</h3>
+                <p className="text-sm text-theme-text/60 leading-relaxed">
+                  Orders over $500 automatically trigger MFA verification. Check your terminal for the OTP code.
+                </p>
+              </div>
+              {/* Connector Line */}
+              <div className="hidden md:block absolute top-8 left-[calc(50%+2rem)] w-[calc(100%-4rem)] h-0.5 bg-gradient-to-r from-cyan-500/50 to-green-500/50"></div>
+            </div>
+
+            <div className="flex flex-col items-center text-center">
+              <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center text-white text-2xl font-bold mb-4 shadow-lg shadow-green-500/30">
+                3
+              </div>
+              <h3 className="text-lg font-semibold text-theme-text mb-2">View Analytics</h3>
+              <p className="text-sm text-theme-text/60 leading-relaxed">
+                Visit the Merchant Portal to see real-time transaction logs and blockchain verification records.
+              </p>
             </div>
           </div>
         </div>
 
-        {/* Products Grid */}
-        <div className={`grid gap-6 ${
-          viewMode === 'grid' 
-            ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' 
-            : 'grid-cols-1'
-        }`}>
-          {filteredProducts.map(product => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              viewMode={viewMode}
-              isWishlisted={wishlist.has(product.id)}
-              onAddToCart={addToCart}
-              onToggleWishlist={toggleWishlist}
-            />
-          ))}
-        </div>
-
-        {filteredProducts.length === 0 && (
-          <div className="glass-panel text-center py-12">
-            <p className="text-theme-text/60">No products found matching your criteria.</p>
+        {/* Demo Products */}
+        <div className="mb-12">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl font-bold text-theme-text mb-2">Demo Products</h2>
+            <p className="text-theme-text/60">
+              💡 Transactions over <span className="text-purple-400 font-semibold">$500</span> require MFA verification
+            </p>
           </div>
-        )}
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            {PRODUCTS.map(product => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                viewMode="grid"
+                isWishlisted={wishlist.has(product.id)}
+                onAddToCart={addToCart}
+                onToggleWishlist={toggleWishlist}
+              />
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* Shopping Cart Sidebar */}
