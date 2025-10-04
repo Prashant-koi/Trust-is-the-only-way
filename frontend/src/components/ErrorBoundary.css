@@ -1,0 +1,56 @@
+.error-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--text-gray);
+}
+
+.error-state h2 {
+  color: var(--error-color);
+  margin-bottom: 1rem;
+}
+
+.error-state details {
+  margin: 2rem 0;
+  text-align: left;
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+.error-state pre {
+  font-size: 0.85rem;
+  overflow-x: auto;
+}
+
+.error-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.retry-btn, .home-btn {
+  padding: 0.75rem 2rem;
+  border-radius: 25px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.retry-btn {
+  background: var(--primary-color);
+  color: white;
+  border: none;
+}
+
+.home-btn {
+  background: #f8f9fa;
+  color: var(--text-gray);
+  border: 2px solid #e9ecef;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.retry-btn:hover, .home-btn:hover {
+  transform: translateY(-2px);
+}

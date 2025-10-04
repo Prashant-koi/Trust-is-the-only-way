@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import './MfaModal.css'
 
-function MfaModal({ orderId, onSuccess, onCancel, backendUrl, merchantId }) {
+function MfaModal({ orderId, amount, onSuccess, onCancel, backendUrl, merchantId }) {
   const [showOtp, setShowOtp] = useState(false)
   const [otp, setOtp] = useState('')
   const [status, setStatus] = useState('')
@@ -15,7 +15,7 @@ function MfaModal({ orderId, onSuccess, onCancel, backendUrl, merchantId }) {
       const response = await fetch(`${backendUrl}/api/send-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ orderId })
+        body: JSON.stringify({ orderId, amount })
       })
 
       const result = await response.json()
