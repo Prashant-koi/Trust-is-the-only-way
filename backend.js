@@ -4,7 +4,9 @@ const path = require('path');
 const { ethers } = require('ethers');
 require('dotenv').config();
 
+
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+
 
 const app = express();
 app.use(cors());

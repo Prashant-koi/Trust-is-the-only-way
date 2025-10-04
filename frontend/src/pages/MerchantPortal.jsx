@@ -26,7 +26,7 @@ function MerchantPortal() {
     successfulTransactions: 0,
     dailyStats: [],
     fraudPatterns: [],
-    transactions: [],
+    recentTransactions: [],
     blockchainTransactions: []
   })
   const [isLoading, setIsLoading] = useState(true)
@@ -179,7 +179,8 @@ function MerchantPortal() {
         </div>
 
         {/* Analytics Dashboard */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="space-y-6">
+          {/* Transaction Trends - Full Width */}
           <div className="glass-panel">
             <h2 className="text-lg font-semibold text-theme-text mb-4 flex items-center gap-2">
               📈 Transaction Trends
@@ -187,33 +188,37 @@ function MerchantPortal() {
             <TransactionChart data={analyticsData.dailyStats} />
           </div>
 
-          <div className="glass-panel">
-            <h2 className="text-lg font-semibold text-theme-text mb-4 flex items-center gap-2">
-              🚨 Fraud Detection
-            </h2>
-            <FraudDetectionPanel 
-              fraudAttempts={analyticsData.fraudAttempts}
-              patterns={analyticsData.fraudPatterns}
-            />
+          {/* MFA and Fraud Detection - Side by Side */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="glass-panel">
+              <h2 className="text-lg font-semibold text-theme-text mb-4 flex items-center gap-2">
+                🔐 MFA Analytics
+              </h2>
+              <MfaAnalytics 
+                mfaUsage={analyticsData.mfaUsage}
+                successRate={calculateMfaSuccessRate()}
+              />
+            </div>
+
+            <div className="glass-panel">
+              <h2 className="text-lg font-semibold text-theme-text mb-4 flex items-center gap-2">
+                🚨 Fraud Detection
+              </h2>
+              <FraudDetectionPanel 
+                fraudAttempts={analyticsData.fraudAttempts}
+                patterns={analyticsData.fraudPatterns}
+              />
+            </div>
           </div>
 
+          {/* Recent Transactions - Full Width */}
           <div className="glass-panel">
-            <h2 className="text-lg font-semibold text-theme-text mb-4 flex items-center gap-2">
-              🔐 MFA Analytics
-            </h2>
-            <MfaAnalytics 
-              mfaUsage={analyticsData.mfaUsage}
-              successRate={calculateMfaSuccessRate()}
-            />
-          </div>
-
-          <div className="glass-panel lg:col-span-1">
             <h2 className="text-lg font-semibold text-theme-text mb-4 flex items-center gap-2">
               📋 Recent Transactions & Blockchain Records
             </h2>
             <RecentTransactions 
-              transactions={analyticsData.transactions}
-              blockchainTransactions={analyticsData.blockchainTransactions}
+              transactions={analyticsData.recentTransactions || []}
+              blockchainTransactions={analyticsData.blockchainTransactions || []}
             />
           </div>
         </div>
