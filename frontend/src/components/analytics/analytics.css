@@ -495,6 +495,24 @@
   color: var(--text-gray);
 }
 
+/* No Transactions State */
+.no-transactions {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--text-gray);
+  grid-column: 1 / -1;
+}
+
+.no-transactions p {
+  margin: 0 0 0.5rem;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.no-transactions small {
+  color: #999;
+}
+
 /* Blockchain Transactions Styles */
 .blockchain-transactions {
   min-height: 300px;

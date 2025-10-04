@@ -1,53 +1,9 @@
 import { CheckCircle, XCircle, AlertTriangle, Clock, ExternalLink } from 'lucide-react'
 import './analytics.css'
 
-function RecentTransactions({ transactions = [] }) {
-  const defaultTransactions = [
-    {
-      id: 'order_1728012345',
-      amount: 1299.99,
-      status: 'completed',
-      mfaUsed: true,
-      timestamp: new Date(Date.now() - 1000 * 60 * 15),
-      method: 'sms',
-      riskScore: 'low',
-      blockchainTx: '0x1a2b3c...',
-      customerInfo: 'customer_***789'
-    },
-    {
-      id: 'order_1728012344',
-      amount: 79.99,
-      status: 'completed',
-      mfaUsed: false,
-      timestamp: new Date(Date.now() - 1000 * 60 * 30),
-      method: 'none',
-      riskScore: 'low',
-      customerInfo: 'customer_***456'
-    },
-    {
-      id: 'order_1728012343',
-      amount: 2499.99,
-      status: 'fraud_blocked',
-      mfaUsed: true,
-      timestamp: new Date(Date.now() - 1000 * 60 * 45),
-      method: 'sms',
-      riskScore: 'high',
-      reason: 'Multiple failed MFA attempts',
-      customerInfo: 'customer_***123'
-    },
-    {
-      id: 'order_1728012342',
-      amount: 149.99,
-      status: 'completed',
-      mfaUsed: false,
-      timestamp: new Date(Date.now() - 1000 * 60 * 60),
-      method: 'none',
-      riskScore: 'low',
-      customerInfo: 'customer_***987'
-    }
-  ]
-
-  const displayTransactions = transactions.length > 0 ? transactions : defaultTransactions
+function RecentTransactions({ transactions = [], blockchainTransactions = [] }) {
+  // Combine real transactions with blockchain data
+  const displayTransactions = transactions.length > 0 ? transactions : []
 
   const getStatusIcon = (status) => {
     switch (status) {
@@ -114,7 +70,13 @@ function RecentTransactions({ transactions = [] }) {
           <div>Actions</div>
         </div>
 
-        {displayTransactions.map((transaction) => (
+        {displayTransactions.length === 0 ? (
+          <div className="no-transactions">
+            <p>No transactions yet</p>
+            <small>Transactions will appear here after customers make purchases</small>
+          </div>
+        ) : (
+          displayTransactions.map((transaction) => (
           <div key={transaction.id} className={`table-row ${getStatusColor(transaction.status)}`}>
             <div className="transaction-id">
               <span className="id-text">{transaction.id}</span>
@@ -163,20 +125,29 @@ function RecentTransactions({ transactions = [] }) {
                 👁️
               </button>
               {transaction.blockchainTx && (
-                <button className="action-btn blockchain" title="View on Blockchain">
+                <a 
+                  href={`https://amoy.polygonscan.com/tx/${transaction.blockchainTx}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="action-btn blockchain"
+                  title="View on Polygon Explorer"
+                >
                   <ExternalLink size={14} />
-                </button>
+                </a>
               )}
             </div>
           </div>
-        ))}
+          ))
+        )}
       </div>
 
-      <div className="transactions-pagination">
-        <button className="pagination-btn">← Previous</button>
-        <span className="pagination-info">Showing 4 of 247 transactions</span>
-        <button className="pagination-btn">Next →</button>
-      </div>
+      {displayTransactions.length > 0 && (
+        <div className="transactions-pagination">
+          <button className="pagination-btn">← Previous</button>
+          <span className="pagination-info">Showing {displayTransactions.length} transactions</span>
+          <button className="pagination-btn">Next →</button>
+        </div>
+      )}
     </div>
   )
 }

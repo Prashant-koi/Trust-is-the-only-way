@@ -92,9 +92,24 @@ function detectFraudPatterns() {
   return patterns;
 }
 
-// Blockchain transaction querying
+// Blockchain transaction caching
+let blockchainCache = {
+  transactions: [],
+  lastFetch: 0,
+  cacheDurationMs: 5 * 60 * 1000 // 5 minutes cache
+};
+
+// Blockchain transaction querying with caching
 async function getBlockchainTransactions() {
   if (!contract || !provider) return [];
+  
+  const now = Date.now();
+  
+  // Return cached data if still valid
+  if (now - blockchainCache.lastFetch < blockchainCache.cacheDurationMs) {
+    console.log('📋 Using cached blockchain transactions');
+    return blockchainCache.transactions;
+  }
   
   try {
     // Get current block number and query only 9 blocks to stay within free tier limit
@@ -102,12 +117,12 @@ async function getBlockchainTransactions() {
     const fromBlock = Math.max(0, currentBlock - 9); // Last 9 blocks to be safe
     const toBlock = currentBlock;
     
-    console.log(`Querying blockchain blocks ${fromBlock} to ${toBlock} (range: ${toBlock - fromBlock + 1})`);
+    console.log(`🔍 Querying blockchain blocks ${fromBlock} to ${toBlock} (range: ${toBlock - fromBlock + 1})`);
     
     const filter = contract.filters.MfaLogged();
     const events = await contract.queryFilter(filter, fromBlock, toBlock);
     
-    return events.map(event => ({
+    const transactions = events.map(event => ({
       transactionHash: event.transactionHash,
       blockNumber: event.blockNumber,
       approvalHash: event.args.approvalHash,
@@ -115,10 +130,18 @@ async function getBlockchainTransactions() {
       timestamp: new Date(Number(event.args.timestamp) * 1000),
       explorerUrl: `https://amoy.polygonscan.com/tx/${event.transactionHash}`
     }));
+    
+    // Update cache
+    blockchainCache.transactions = transactions;
+    blockchainCache.lastFetch = now;
+    
+    console.log(`💾 Cached ${transactions.length} blockchain transactions`);
+    
+    return transactions;
   } catch (error) {
     console.error('Error fetching blockchain transactions:', error);
-    // Return empty array instead of sample data to avoid confusion
-    return [];
+    // Return cached data if available, otherwise empty array
+    return blockchainCache.transactions.length > 0 ? blockchainCache.transactions : [];
   }
 }
 
@@ -317,17 +340,19 @@ app.post('/api/create-payment-intent', async (req, res) => {
       }
     });
 
-    // Record transaction attempt
-    recordTransaction('transaction', {
-      merchantId,
-      orderId,
-      amount,
-      success: !mfaRequired,
-      mfaUsed: false,
-      method: mfaRequired ? 'pending' : 'none',
-      riskScore: mfaRequired ? 'medium' : 'low',
-      stripePaymentIntentId: paymentIntent.id
-    });
+    // Only record transaction for non-MFA transactions (MFA transactions recorded after verification)
+    if (!mfaRequired) {
+      recordTransaction('transaction', {
+        merchantId,
+        orderId,
+        amount,
+        success: true,
+        mfaUsed: false,
+        method: 'none',
+        riskScore: 'low',
+        stripePaymentIntentId: paymentIntent.id
+      });
+    }
 
     res.json({
       success: true,
@@ -425,6 +450,10 @@ app.post('/api/verify-otp', async (req, res) => {
       console.log(`📤 Transaction sent: ${tx.hash}`);
       await tx.wait();
       console.log(`✅ Transaction confirmed!`);
+      
+      // Invalidate blockchain cache to fetch new transactions immediately
+      blockchainCache.lastFetch = 0;
+      console.log(`🔄 Blockchain cache invalidated - new transaction will appear on next fetch`);
       
       blockchainTx = {
         hash: tx.hash,

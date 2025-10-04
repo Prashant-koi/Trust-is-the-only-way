@@ -14,7 +14,6 @@ import TransactionChart from '../components/analytics/TransactionChart'
 import FraudDetectionPanel from '../components/analytics/FraudDetectionPanel'
 import MfaAnalytics from '../components/analytics/MfaAnalytics'
 import RecentTransactions from '../components/analytics/RecentTransactions'
-import BlockchainTransactions from '../components/analytics/BlockchainTransactions'
 import './MerchantPortal.css'
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || window.location.origin
@@ -28,7 +27,8 @@ function MerchantPortal() {
     totalRevenue: 0,
     recentTransactions: [],
     dailyStats: [],
-    fraudPatterns: []
+    fraudPatterns: [],
+    blockchainTransactions: []
   })
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -180,14 +180,12 @@ function MerchantPortal() {
           />
         </div>
 
-        <div className="analytics-section">
-          <h2>⛓️ Blockchain Records</h2>
-          <BlockchainTransactions backendUrl={BACKEND_URL} />
-        </div>
-
         <div className="analytics-section full-width">
-          <h2>📋 Recent Transactions</h2>
-          <RecentTransactions transactions={analyticsData.recentTransactions} />
+          <h2>📋 Recent Transactions & Blockchain Records</h2>
+          <RecentTransactions 
+            transactions={analyticsData.recentTransactions}
+            blockchainTransactions={analyticsData.blockchainTransactions}
+          />
         </div>
       </div>
     </div>
