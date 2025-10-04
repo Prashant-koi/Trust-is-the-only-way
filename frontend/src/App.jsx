@@ -3,15 +3,14 @@ import Navigation from './components/Navigation'
 import CustomerStore from './pages/CustomerStore'
 import MerchantPortal from './pages/MerchantPortal'
 import ErrorBoundary from './components/ErrorBoundary'
-import './App.css'
 
 function App() {
   return (
     <ErrorBoundary>
       <Router>
-        <div className="app">
+        <div className="min-h-screen bg-gray-50">
           <Navigation />
-          <main className="main-content">
+          <main>
             <Routes>
               <Route path="/" element={<CustomerStore />} />
               <Route path="/merchant" element={

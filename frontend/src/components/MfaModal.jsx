@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import './MfaModal.css'
+
 
 function MfaModal({ orderId, amount, onSuccess, onCancel, backendUrl, merchantId }) {
   const [showOtp, setShowOtp] = useState(false)

@@ -1,4 +1,4 @@
-import './Cart.css'
+
 
 function Cart({ cart, total, onCheckout, isProcessing }) {
   return (

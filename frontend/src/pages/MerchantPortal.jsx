@@ -14,7 +14,6 @@ import TransactionChart from '../components/analytics/TransactionChart'
 import FraudDetectionPanel from '../components/analytics/FraudDetectionPanel'
 import MfaAnalytics from '../components/analytics/MfaAnalytics'
 import RecentTransactions from '../components/analytics/RecentTransactions'
-import './MerchantPortal.css'
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || window.location.origin
 
@@ -68,10 +67,12 @@ function MerchantPortal() {
 
   if (isLoading) {
     return (
-      <div className="container">
-        <div className="loading-state">
-          <Activity className="loading-icon" />
-          <p>Loading merchant analytics...</p>
+      <div className="min-h-screen bg-gray-100 p-6">
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <Activity className="h-8 w-8 animate-spin text-blue-600 mx-auto mb-4" />
+            <p className="text-gray-600">Loading merchant analytics...</p>
+          </div>
         </div>
       </div>
     )
@@ -79,113 +80,143 @@ function MerchantPortal() {
 
   if (error) {
     return (
-      <div className="container">
-        <div className="error-state">
-          <XCircle className="error-icon" />
-          <h2>Error Loading Analytics</h2>
-          <p>{error}</p>
-          <button onClick={fetchAnalytics} className="retry-btn">
-            Try Again
-          </button>
+      <div className="min-h-screen bg-gray-100 p-6">
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <XCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
+            <h2 className="text-xl font-semibold text-gray-900 mb-2">Error Loading Analytics</h2>
+            <p className="text-gray-600 mb-4">{error}</p>
+            <button 
+              onClick={fetchAnalytics} 
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+            >
+              Try Again
+            </button>
+          </div>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="container">
-      <header className="portal-header">
-        <div className="header-content">
-          <h1>📊 Merchant Analytics Portal</h1>
-          <p className="subtitle">Real-time fraud detection and transaction analytics</p>
-        </div>
-        <div className="header-actions">
-          <button onClick={fetchAnalytics} className="refresh-btn">
-            <Activity className="btn-icon" />
-            Refresh Data
-          </button>
+    <div className="min-h-screen bg-gray-100">
+      <header className="bg-white shadow-sm border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
+                📊 Merchant Analytics Portal
+              </h1>
+              <p className="text-gray-600 mt-1">Real-time fraud detection and transaction analytics</p>
+            </div>
+            <button 
+              onClick={fetchAnalytics} 
+              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+            >
+              <Activity className="h-4 w-4" />
+              Refresh Data
+            </button>
+          </div>
         </div>
       </header>
 
-      {/* Key Metrics Cards */}
-      <div className="metrics-grid">
-        <div className="metric-card revenue">
-          <div className="metric-icon">
-            <DollarSign />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Key Metrics Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
+          <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Total Revenue</p>
+                <p className="text-2xl font-bold text-gray-900">${analyticsData.totalRevenue.toLocaleString()}</p>
+                <p className="text-sm text-green-600 mt-1">+12.5% from last month</p>
+              </div>
+              <div className="h-12 w-12 bg-green-100 rounded-lg flex items-center justify-center">
+                <DollarSign className="h-6 w-6 text-green-600" />
+              </div>
+            </div>
           </div>
-          <div className="metric-content">
-            <h3>Total Revenue</h3>
-            <div className="metric-value">${analyticsData.totalRevenue.toLocaleString()}</div>
-            <div className="metric-change positive">+12.5% from last month</div>
-          </div>
-        </div>
 
-        <div className="metric-card transactions">
-          <div className="metric-icon">
-            <CheckCircle />
+          <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Successful Transactions</p>
+                <p className="text-2xl font-bold text-gray-900">{analyticsData.successfulTransactions.toLocaleString()}</p>
+                <p className="text-sm text-green-600 mt-1">
+                  {analyticsData.totalTransactions > 0 ? 
+                    ((analyticsData.successfulTransactions / analyticsData.totalTransactions) * 100).toFixed(1) : 0}% success rate
+                </p>
+              </div>
+              <div className="h-12 w-12 bg-green-100 rounded-lg flex items-center justify-center">
+                <CheckCircle className="h-6 w-6 text-green-600" />
+              </div>
+            </div>
           </div>
-          <div className="metric-content">
-            <h3>Successful Transactions</h3>
-            <div className="metric-value">{analyticsData.successfulTransactions.toLocaleString()}</div>
-            <div className="metric-change positive">
-              {analyticsData.totalTransactions > 0 ? 
-                ((analyticsData.successfulTransactions / analyticsData.totalTransactions) * 100).toFixed(1) : 0}% success rate
+
+          <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Fraud Attempts</p>
+                <p className="text-2xl font-bold text-gray-900">{analyticsData.fraudAttempts.toLocaleString()}</p>
+                <p className="text-sm text-red-600 mt-1">{calculateFraudRate()}% fraud rate</p>
+              </div>
+              <div className="h-12 w-12 bg-red-100 rounded-lg flex items-center justify-center">
+                <AlertTriangle className="h-6 w-6 text-red-600" />
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">MFA Verifications</p>
+                <p className="text-2xl font-bold text-gray-900">{analyticsData.mfaUsage.toLocaleString()}</p>
+                <p className="text-sm text-blue-600 mt-1">{calculateMfaSuccessRate()}% success rate</p>
+              </div>
+              <div className="h-12 w-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                <Shield className="h-6 w-6 text-blue-600" />
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="metric-card fraud">
-          <div className="metric-icon">
-            <AlertTriangle />
+        {/* Analytics Dashboard */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+              📈 Transaction Trends
+            </h2>
+            <TransactionChart data={analyticsData.dailyStats} />
           </div>
-          <div className="metric-content">
-            <h3>Fraud Attempts</h3>
-            <div className="metric-value">{analyticsData.fraudAttempts.toLocaleString()}</div>
-            <div className="metric-change negative">{calculateFraudRate()}% fraud rate</div>
+
+          <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+              🚨 Fraud Detection
+            </h2>
+            <FraudDetectionPanel 
+              fraudAttempts={analyticsData.fraudAttempts}
+              patterns={analyticsData.fraudPatterns}
+            />
           </div>
-        </div>
 
-        <div className="metric-card mfa">
-          <div className="metric-icon">
-            <Shield />
+          <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+              🔐 MFA Analytics
+            </h2>
+            <MfaAnalytics 
+              mfaUsage={analyticsData.mfaUsage}
+              successRate={calculateMfaSuccessRate()}
+            />
           </div>
-          <div className="metric-content">
-            <h3>MFA Verifications</h3>
-            <div className="metric-value">{analyticsData.mfaUsage.toLocaleString()}</div>
-            <div className="metric-change positive">{calculateMfaSuccessRate()}% success rate</div>
+
+          <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200 lg:col-span-2">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+              📋 Recent Transactions & Blockchain Records
+            </h2>
+            <RecentTransactions 
+              transactions={analyticsData.recentTransactions}
+              blockchainTransactions={analyticsData.blockchainTransactions}
+            />
           </div>
-        </div>
-      </div>
-
-      {/* Analytics Dashboard */}
-      <div className="analytics-grid">
-        <div className="analytics-section">
-          <h2>📈 Transaction Trends</h2>
-          <TransactionChart data={analyticsData.dailyStats} />
-        </div>
-
-        <div className="analytics-section">
-          <h2>🚨 Fraud Detection</h2>
-          <FraudDetectionPanel 
-            fraudAttempts={analyticsData.fraudAttempts}
-            patterns={analyticsData.fraudPatterns}
-          />
-        </div>
-
-        <div className="analytics-section">
-          <h2>🔐 MFA Analytics</h2>
-          <MfaAnalytics 
-            mfaUsage={analyticsData.mfaUsage}
-            successRate={calculateMfaSuccessRate()}
-          />
-        </div>
-
-        <div className="analytics-section full-width">
-          <h2>📋 Recent Transactions & Blockchain Records</h2>
-          <RecentTransactions 
-            transactions={analyticsData.recentTransactions}
-            blockchainTransactions={analyticsData.blockchainTransactions}
-          />
         </div>
       </div>
     </div>

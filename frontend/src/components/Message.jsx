@@ -1,4 +1,4 @@
-import './Message.css'
+
 
 function Message({ message }) {
   if (!message.text) {

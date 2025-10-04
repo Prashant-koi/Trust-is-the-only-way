@@ -6,7 +6,6 @@ import {
   useStripe,
   useElements
 } from '@stripe/react-stripe-js'
-import './StripePaymentForm.css'
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY)
 
@@ -180,61 +179,97 @@ function PaymentForm({ orderId, amount, onPaymentSuccess, onPaymentError }) {
   }
 
   return (
-    <div className="stripe-payment-form">
-      <div className="payment-header">
-        <h3>💳 Secure Payment</h3>
-        <p>Order: {orderId} • Amount: ${amount}</p>
+    <div className="max-w-md mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
+      <div className="bg-gradient-to-r from-blue-600 to-purple-600 px-6 py-4 text-white">
+        <h3 className="text-lg font-semibold flex items-center gap-2">
+          💳 Secure Payment
+        </h3>
+        <p className="text-blue-100 text-sm mt-1">
+          Order: {orderId} • Amount: ${amount}
+        </p>
       </div>
 
-      {!showMfa ? (
-        <form onSubmit={handleSubmit} className="payment-form">
-          <div className="card-element-container">
-            <label>Card Information</label>
-            <CardElement options={cardStyle} />
-          </div>
-          
-          <button 
-            type="submit" 
-            disabled={!stripe || isProcessing}
-            className="pay-button"
-          >
-            {isProcessing ? 'Processing...' : `Pay $${amount}`}
-          </button>
-        </form>
-      ) : (
-        <form onSubmit={handleMfaSubmit} className="mfa-form">
-          <div className="mfa-notice">
-            <h4>🔐 Multi-Factor Authentication Required</h4>
-            <p>This transaction requires additional verification. Please enter the OTP sent to your device.</p>
-          </div>
-          
-          <div className="otp-input-container">
-            <label>Enter OTP Code:</label>
-            <input
-              type="text"
-              value={otp}
-              onChange={(e) => setOtp(e.target.value)}
-              placeholder="123456"
-              maxLength="6"
-              className="otp-input"
-            />
-          </div>
-          
-          <button 
-            type="submit" 
-            disabled={isProcessing || otp.length !== 6}
-            className="verify-button"
-          >
-            {isProcessing ? 'Verifying...' : 'Verify & Pay'}
-          </button>
-        </form>
-      )}
+      <div className="p-6">
+        {!showMfa ? (
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Card Information
+              </label>
+              <div className="p-3 border border-gray-300 rounded-lg bg-gray-50">
+                <CardElement options={cardStyle} />
+              </div>
+            </div>
+            
+            <button 
+              type="submit" 
+              disabled={!stripe || isProcessing}
+              className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
+            >
+              {isProcessing ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+                  Processing...
+                </>
+              ) : (
+                `Pay $${amount}`
+              )}
+            </button>
+          </form>
+        ) : (
+          <form onSubmit={handleMfaSubmit} className="space-y-4">
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+              <h4 className="text-amber-800 font-semibold flex items-center gap-2">
+                🔐 Multi-Factor Authentication Required
+              </h4>
+              <p className="text-amber-700 text-sm mt-1">
+                This transaction requires additional verification. Please enter the OTP sent to your device.
+              </p>
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Enter OTP Code:
+              </label>
+              <input
+                type="text"
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
+                placeholder="123456"
+                maxLength="6"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-center text-lg tracking-widest font-mono"
+              />
+            </div>
+            
+            <button 
+              type="submit" 
+              disabled={isProcessing || otp.length !== 6}
+              className="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
+            >
+              {isProcessing ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+                  Verifying...
+                </>
+              ) : (
+                'Verify & Pay'
+              )}
+            </button>
+          </form>
+        )}
 
-      {paymentStatus && (
-        <div className={`payment-status ${paymentStatus.includes('successful') ? 'success' : ''}`}>
-          {paymentStatus}
-        </div>
-      )}
+        {paymentStatus && (
+          <div className={`mt-4 p-3 rounded-lg text-sm font-medium ${
+            paymentStatus.includes('successful') 
+              ? 'bg-green-50 text-green-700 border border-green-200' 
+              : paymentStatus.includes('failed')
+              ? 'bg-red-50 text-red-700 border border-red-200'
+              : 'bg-blue-50 text-blue-700 border border-blue-200'
+          }`}>
+            {paymentStatus}
+          </div>
+        )}
+      </div>
     </div>
   )
 }

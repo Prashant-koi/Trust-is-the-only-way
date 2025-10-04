@@ -1,4 +1,4 @@
-import './ProductGrid.css'
+
 
 function ProductGrid({ products, onAddToCart }) {
   return (
