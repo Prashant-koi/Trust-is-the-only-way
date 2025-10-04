@@ -7,6 +7,15 @@ export default {
   theme: {
     extend: {
       colors: {
+        // Theme colors from the CSS
+        'theme': {
+          'bg': '#0f0f1a',
+          'text': '#f8f9ff',
+          'text-secondary': 'rgba(248, 249, 255, 0.76)',
+          'text-accent': 'rgba(0, 217, 255, 0.72)',
+          'purple': '#6c63ff',
+          'cyan': '#00d9ff',
+        },
         primary: {
           50: '#eff6ff',
           500: '#3b82f6',
@@ -28,6 +37,17 @@ export default {
           500: '#f59e0b',
           600: '#d97706',
         }
+      },
+      fontFamily: {
+        'inter': ['Inter', 'system-ui', 'sans-serif'],
+      },
+      backdropBlur: {
+        'xs': '2px',
+        'sm': '4px',
+        'md': '8px',
+        'lg': '12px',
+        'xl': '16px',
+        '2xl': '24px',
       }
     },
   },

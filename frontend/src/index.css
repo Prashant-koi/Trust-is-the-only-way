@@ -1,3 +1,220 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  line-height: 1.6;
+  font-weight: 400;
+  color: #f8f9ff;
+  background: linear-gradient(180deg, #0f0f1a 0%, #1a1a2e 100%);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: transparent;
+  color: inherit;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Loading Spinner Styles */
+.spinner {
+  width: 50px;
+  height: 50px;
+  position: relative;
+  margin: 0 auto;
+}
+
+.double-bounce1, .double-bounce2 {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.7);
+  opacity: 0.6;
+  position: absolute;
+  top: 0;
+  left: 0;
+  animation: sk-bounce 2.0s infinite ease-in-out;
+}
+
+.double-bounce2 {
+  animation-delay: -1.0s;
+}
+
+@keyframes sk-bounce {
+  0%, 100% { 
+    transform: scale(0.0);
+  } 50% { 
+    transform: scale(1.0);
+  }
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.page-shell {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 4rem 1.5rem 6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.page-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.page-header h1 {
+  margin: 0.5rem 0 0;
+  font-size: clamp(2rem, 3vw, 2.75rem);
+  font-weight: 600;
+}
+
+.subtitle {
+  max-width: 38rem;
+  color: rgba(248, 249, 255, 0.76);
+  margin: 0.75rem 0 0;
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-size: 0.75rem;
+  color: rgba(108, 99, 255, 0.8);
+  margin: 0;
+}
+
+.panel-grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.glass-panel {
+  backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
+}
+
+.glass-panel:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+  border-color: rgba(108, 99, 255, 0.3);
+}
+
+.glass-panel h2 {
+  margin: 0 0 0.75rem;
+  font-size: 1.35rem;
+}
+
+.glass-panel p {
+  margin: 0;
+  color: rgba(248, 249, 255, 0.8);
+}
+
+button.primary {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: none;
+  background: #6c63ff;
+  color: white;
+  font-weight: 500;
+  font-size: 0.875rem;
+  transition: all 200ms ease;
+  border: 1px solid transparent;
+}
+
+button.primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+button.primary:hover:not(:disabled) {
+  background: #5b52d1;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(108, 99, 255, 0.3);
+}
+
+.error {
+  margin-top: 1rem;
+  color: #f87171;
+}
+
+@media (max-width: 768px) {
+  .page-shell {
+    padding: 3rem 1.25rem 4rem;
+  }
+
+  .page-header {
+    gap: 1.5rem;
+  }
+}
+
+/* Custom Tailwind Classes */
+@layer components {
+  .glass-card {
+    @apply backdrop-blur-xl rounded-xl shadow-2xl transition-all duration-300 hover:-translate-y-1;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .glass-card:hover {
+    box-shadow: 0 20px 40px rgba(108, 99, 255, 0.1);
+    border-color: rgba(108, 99, 255, 0.2);
+  }
+  
+  .glass-button {
+    @apply backdrop-blur-md rounded-lg px-4 py-2 transition-all duration-200 text-sm font-medium;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: rgba(255, 255, 255, 0.9);
+  }
+  
+  .glass-button:hover {
+    background: rgba(255, 255, 255, 0.12);
+  }
+  
+  .primary-gradient {
+    @apply bg-purple-600;
+  }
+  
+  .text-primary {
+    color: #f8f9ff;
+  }
+  
+  .text-secondary {
+    color: rgba(248, 249, 255, 0.76);
+  }
+  
+  .text-accent {
+    @apply text-purple-400;
+  }
+}

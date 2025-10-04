@@ -20,40 +20,42 @@ const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || window.location.origin
 function MerchantPortal() {
   const [analyticsData, setAnalyticsData] = useState({
     totalTransactions: 0,
-    successfulTransactions: 0,
+    totalRevenue: 0,
     fraudAttempts: 0,
     mfaUsage: 0,
-    totalRevenue: 0,
-    recentTransactions: [],
+    successfulTransactions: 0,
     dailyStats: [],
     fraudPatterns: [],
+    transactions: [],
     blockchainTransactions: []
   })
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
 
-  useEffect(() => {
-    fetchAnalytics()
-    // Refresh every 30 seconds for real-time updates
-    const interval = setInterval(fetchAnalytics, 30000)
-    return () => clearInterval(interval)
-  }, [])
-
   const fetchAnalytics = async () => {
     try {
+      setIsLoading(true)
+      setError(null)
+      
       const response = await fetch(`${BACKEND_URL}/api/merchant/analytics`)
       if (!response.ok) {
-        throw new Error('Failed to fetch analytics')
+        throw new Error(`HTTP error! status: ${response.status}`)
       }
+      
       const data = await response.json()
       setAnalyticsData(data)
-      setError(null)
     } catch (err) {
       setError(err.message)
     } finally {
       setIsLoading(false)
     }
   }
+
+  useEffect(() => {
+    fetchAnalytics()
+    const interval = setInterval(fetchAnalytics, 30000)
+    return () => clearInterval(interval)
+  }, [])
 
   const calculateFraudRate = () => {
     const total = analyticsData.totalTransactions + analyticsData.fraudAttempts
@@ -67,11 +69,14 @@ function MerchantPortal() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-100 p-6">
-        <div className="flex items-center justify-center h-64">
-          <div className="text-center">
-            <Activity className="h-8 w-8 animate-spin text-blue-600 mx-auto mb-4" />
-            <p className="text-gray-600">Loading merchant analytics...</p>
+      <div className="min-h-screen">
+        <div className="page-shell">
+          <div className="glass-panel text-center py-12">
+            <div className="spinner">
+              <div className="double-bounce1"></div>
+              <div className="double-bounce2"></div>
+            </div>
+            <p className="text-theme-text/60 mt-4">Loading merchant analytics...</p>
           </div>
         </div>
       </div>
@@ -80,15 +85,15 @@ function MerchantPortal() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-100 p-6">
-        <div className="flex items-center justify-center h-64">
-          <div className="text-center">
-            <XCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-            <h2 className="text-xl font-semibold text-gray-900 mb-2">Error Loading Analytics</h2>
-            <p className="text-gray-600 mb-4">{error}</p>
+      <div className="min-h-screen">
+        <div className="page-shell">
+          <div className="glass-panel text-center py-12">
+            <XCircle className="h-12 w-12 text-red-400 mx-auto mb-4" />
+            <h2 className="text-xl font-semibold text-theme-text mb-2">Error Loading Analytics</h2>
+            <p className="text-theme-text/60 mb-4">{error}</p>
             <button 
               onClick={fetchAnalytics} 
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+              className="primary"
             >
               Try Again
             </button>
@@ -99,81 +104,75 @@ function MerchantPortal() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <header className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
-                📊 Merchant Analytics Portal
-              </h1>
-              <p className="text-gray-600 mt-1">Real-time fraud detection and transaction analytics</p>
-            </div>
-            <button 
-              onClick={fetchAnalytics} 
-              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
-            >
-              <Activity className="h-4 w-4" />
-              Refresh Data
-            </button>
+    <div className="min-h-screen">
+      <div className="page-shell">
+        <div className="page-header">
+          <div>
+            <p className="eyebrow">Fraud Detection Analytics</p>
+            <h1>Merchant Portal</h1>
+            <p className="subtitle">
+              Real-time fraud detection and transaction analytics powered by blockchain MFA verification.
+            </p>
           </div>
+          <button 
+            onClick={fetchAnalytics} 
+            className="glass-button flex items-center gap-2"
+          >
+            <Activity className="h-4 w-4" />
+            Refresh Data
+          </button>
         </div>
-      </header>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Key Metrics Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+        <div className="panel-grid">
+          <div className="glass-panel">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Total Revenue</p>
-                <p className="text-2xl font-bold text-gray-900">${analyticsData.totalRevenue.toLocaleString()}</p>
-                <p className="text-sm text-green-600 mt-1">+12.5% from last month</p>
+                <p className="text-sm font-medium text-theme-text/70">Total Revenue</p>
+                <p className="text-2xl font-bold text-theme-text">${analyticsData.totalRevenue.toLocaleString()}</p>
+                <p className="text-sm text-green-400 mt-1">+12.5% from last month</p>
               </div>
-              <div className="h-12 w-12 bg-green-100 rounded-lg flex items-center justify-center">
-                <DollarSign className="h-6 w-6 text-green-600" />
+              <div className="h-12 w-12 bg-green-500/10 rounded-lg flex items-center justify-center border border-green-500/20">
+                <DollarSign className="h-6 w-6 text-green-400" />
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+          <div className="glass-panel">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Successful Transactions</p>
-                <p className="text-2xl font-bold text-gray-900">{analyticsData.successfulTransactions.toLocaleString()}</p>
-                <p className="text-sm text-green-600 mt-1">
-                  {analyticsData.totalTransactions > 0 ? 
-                    ((analyticsData.successfulTransactions / analyticsData.totalTransactions) * 100).toFixed(1) : 0}% success rate
-                </p>
+                <p className="text-sm font-medium text-theme-text/70">Completed Transactions</p>
+                <p className="text-2xl font-bold text-theme-text">{analyticsData.totalTransactions.toLocaleString()}</p>
+                <p className="text-sm text-green-400 mt-1">+8.2% from yesterday</p>
               </div>
-              <div className="h-12 w-12 bg-green-100 rounded-lg flex items-center justify-center">
-                <CheckCircle className="h-6 w-6 text-green-600" />
+              <div className="h-12 w-12 bg-green-500/10 rounded-lg flex items-center justify-center border border-green-500/20">
+                <CheckCircle className="h-6 w-6 text-green-400" />
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+          <div className="glass-panel">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Fraud Attempts</p>
-                <p className="text-2xl font-bold text-gray-900">{analyticsData.fraudAttempts.toLocaleString()}</p>
-                <p className="text-sm text-red-600 mt-1">{calculateFraudRate()}% fraud rate</p>
+                <p className="text-sm font-medium text-theme-text/70">Fraud Attempts</p>
+                <p className="text-2xl font-bold text-theme-text">{analyticsData.fraudAttempts.toLocaleString()}</p>
+                <p className="text-sm text-red-400 mt-1">{calculateFraudRate()}% fraud rate</p>
               </div>
-              <div className="h-12 w-12 bg-red-100 rounded-lg flex items-center justify-center">
-                <AlertTriangle className="h-6 w-6 text-red-600" />
+              <div className="h-12 w-12 bg-red-500/10 rounded-lg flex items-center justify-center border border-red-500/20">
+                <AlertTriangle className="h-6 w-6 text-red-400" />
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+          <div className="glass-panel">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">MFA Verifications</p>
-                <p className="text-2xl font-bold text-gray-900">{analyticsData.mfaUsage.toLocaleString()}</p>
-                <p className="text-sm text-blue-600 mt-1">{calculateMfaSuccessRate()}% success rate</p>
+                <p className="text-sm font-medium text-theme-text/70">MFA Verifications</p>
+                <p className="text-2xl font-bold text-theme-text">{analyticsData.mfaUsage.toLocaleString()}</p>
+                <p className="text-sm text-purple-400 mt-1">{calculateMfaSuccessRate()}% success rate</p>
               </div>
-              <div className="h-12 w-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                <Shield className="h-6 w-6 text-blue-600" />
+              <div className="h-12 w-12 bg-purple-500/10 rounded-lg flex items-center justify-center border border-purple-500/20">
+                <Shield className="h-6 w-6 text-purple-400" />
               </div>
             </div>
           </div>
@@ -181,15 +180,15 @@ function MerchantPortal() {
 
         {/* Analytics Dashboard */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+          <div className="glass-panel">
+            <h2 className="text-lg font-semibold text-theme-text mb-4 flex items-center gap-2">
               📈 Transaction Trends
             </h2>
             <TransactionChart data={analyticsData.dailyStats} />
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+          <div className="glass-panel">
+            <h2 className="text-lg font-semibold text-theme-text mb-4 flex items-center gap-2">
               🚨 Fraud Detection
             </h2>
             <FraudDetectionPanel 
@@ -198,8 +197,8 @@ function MerchantPortal() {
             />
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+          <div className="glass-panel">
+            <h2 className="text-lg font-semibold text-theme-text mb-4 flex items-center gap-2">
               🔐 MFA Analytics
             </h2>
             <MfaAnalytics 
@@ -208,12 +207,12 @@ function MerchantPortal() {
             />
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200 lg:col-span-2">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+          <div className="glass-panel lg:col-span-1">
+            <h2 className="text-lg font-semibold text-theme-text mb-4 flex items-center gap-2">
               📋 Recent Transactions & Blockchain Records
             </h2>
             <RecentTransactions 
-              transactions={analyticsData.recentTransactions}
+              transactions={analyticsData.transactions}
               blockchainTransactions={analyticsData.blockchainTransactions}
             />
           </div>
