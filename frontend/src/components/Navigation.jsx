@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
-import { Shield, Store, BarChart3 } from 'lucide-react'
+import { Shield, Store, BarChart3, Book } from 'lucide-react'
 
 function Navigation() {
   const location = useLocation()
@@ -12,7 +12,10 @@ function Navigation() {
             <div className="p-2 rounded-lg bg-purple-600 border border-purple-500">
               <Shield className="h-5 w-5 text-white" />
             </div>
-            <span className="text-xl font-semibold text-theme-text">PayShield</span>
+            <div>
+              <span className="text-xl font-semibold text-theme-text">TrustJS</span>
+              <p className="text-xs text-theme-text/50 -mt-1">Trust is the only way</p>
+            </div>
           </div>
           
           <div className="flex space-x-2">
@@ -25,7 +28,7 @@ function Navigation() {
               }`}
             >
               <Store className="h-4 w-4" />
-              Customer Store
+              Demo
             </Link>
             
             <Link 
@@ -37,7 +40,19 @@ function Navigation() {
               }`}
             >
               <BarChart3 className="h-4 w-4" />
-              Merchant Portal
+              Analytics
+            </Link>
+
+            <Link 
+              to="/docs" 
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                location.pathname === '/docs' 
+                  ? 'bg-white/12 text-white border border-white/20' 
+                  : 'text-theme-text/70 hover:text-white hover:bg-white/8'
+              }`}
+            >
+              <Book className="h-4 w-4" />
+              Docs
             </Link>
           </div>
         </div>

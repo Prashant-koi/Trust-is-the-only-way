@@ -109,10 +109,10 @@ function MerchantPortal() {
       <div className="page-shell">
         <div className="page-header">
           <div>
-            <p className="eyebrow">Fraud Detection Analytics</p>
+            <p className="eyebrow">TrustJS Analytics</p>
             <h1>Merchant Portal</h1>
             <p className="subtitle">
-              Real-time fraud detection and transaction analytics powered by blockchain MFA verification.
+              Trust is the only way. Real-time fraud detection and transaction analytics powered by blockchain MFA verification.
             </p>
           </div>
           <button 

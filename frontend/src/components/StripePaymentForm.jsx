@@ -21,7 +21,7 @@ function PaymentForm({ orderId, amount, onPaymentSuccess, onPaymentError }) {
   const [clientSecret, setClientSecret] = useState('')
   const [paymentIntentId, setPaymentIntentId] = useState('')
   const [paymentMethodId, setPaymentMethodId] = useState('')
-  const [email, setEmail] = useState('demo@payshield.com')
+  const [email, setEmail] = useState('demo@trustjs.com')
   const [linkAuthenticated, setLinkAuthenticated] = useState(false)
   const [otpSent, setOtpSent] = useState(false)
   
@@ -346,7 +346,7 @@ function PaymentForm({ orderId, amount, onPaymentSuccess, onPaymentError }) {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="your@email.com"
+                placeholder="demo@trustjs.com"
                 className="w-full px-4 py-3 bg-[#1a1a2e] border border-white/20 rounded-lg text-theme-text placeholder-theme-text/50 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-purple-400"
               />
             </div>

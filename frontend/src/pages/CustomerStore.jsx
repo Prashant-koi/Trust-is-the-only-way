@@ -122,12 +122,12 @@ function CustomerStore() {
       <div className="page-shell">
         {/* Hero Section */}
         <div className="text-center max-w-4xl mx-auto mb-12">
-          <p className="eyebrow">PayShield Interactive Demo</p>
+          <p className="eyebrow">TrustJS Interactive Demo</p>
           <h1 className="text-4xl md:text-5xl font-bold text-theme-text mb-4">
-            Experience Fraud Detection in Action
+            Trust is the Only Way
           </h1>
           <p className="text-lg text-theme-text/70 mb-8 max-w-2xl mx-auto">
-            Test our blockchain-powered MFA system with real payment flows. See how transactions are secured and verified.
+            Experience blockchain-powered fraud detection in action. Test our MFA system with real payment flows and see how trust is built through verification.
           </p>
           
           {/* Action Buttons */}
@@ -138,11 +138,12 @@ function CustomerStore() {
             >
               📊 View Merchant Portal
             </a>
-            <button 
+            <a 
+              href="/docs"
               className="inline-flex items-center gap-2 px-8 py-4 bg-white/10 hover:bg-white/15 text-theme-text font-semibold rounded-xl transition-all duration-200 border border-white/20"
             >
               📦 Integrate Our SDK
-            </button>
+            </a>
           </div>
 
           {/* Cart Summary Badge */}
