@@ -380,7 +380,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - **Documentation**: http://localhost:3000/docs
 - **GitHub Issues**: https://github.com/trustjs/trust-is-the-only-way/issues
-- **Email**: support@trustjs.com
 
 ---
 
@@ -401,8 +400,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **TrustJS - Trust is the Only Way**
 
-Built with ❤️ for secure payments
-
-[Website](https://trustjs.com) • [Documentation](http://localhost:3000/docs) • [GitHub](https://github.com/trustjs/trust-is-the-only-way)
+Built with ❤️ for secure  [Documentation](http://localhost:3000/docs) • [GitHub](https://github.com/trustjs/trust-is-the-only-way)
 
 </div>
